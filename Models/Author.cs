@@ -7,7 +7,14 @@ public class Author
     public string LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
 
-    public Author(int AuthorId,string Name, string LastName)
+    public List<Book> Books{ get; set; }
+
+    public Author()
+    {
+        
+    }
+
+    public Author(int AuthorId, string Name, string LastName)
     {
         this.AuthorId = AuthorId;
         this.Name = Name;

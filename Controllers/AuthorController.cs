@@ -1,4 +1,5 @@
-
+namespace LibraryApp.Controllers;
+using LibraryApp.Data;
 using LibraryApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,53 +7,53 @@ using Microsoft.AspNetCore.Mvc;
 [Route("authors")]
 public class AuthorController : ControllerBase
 {
-    List<Author> ListOfAuthors = new List<Author>
-    {
-        new(1,"Name1","LastName1"),
-        new(2,"Name2","LastName2"),
-        new(3,"Name3","LastName3"),
-        new(4,"Name4","LastName4"),
-        new(5,"Name5","LastName5"),
+    private readonly LibraryDBContext context;
 
-    };
+    public AuthorController(LibraryDBContext context)
+    {
+        this.context = context;
+    }
 
     [HttpGet]
     public ActionResult<IEnumerable<Author>> GetAuthors()
     {
-        return Ok(ListOfAuthors);
+        return Ok(context.Authors.ToList());
     }
 
-    [HttpGet("{AuthorId}")]
-    public ActionResult<Author> GetAuthor(int AuthorId)
+    [HttpGet("{authorid}")]
+    public ActionResult<Author> GetAuthor([FromRoute]int authorid)
     {
-        var author = ListOfAuthors.FirstOrDefault(a => a.AuthorId == AuthorId);
+        var author = context.Authors.SingleOrDefault(e => e.AuthorId==authorid);        //efficient EF
         if (author == null) return NotFound();
         return Ok(author);
     }
 
     [HttpPost]
-    public ActionResult<Author> CreateAuthor(Author Author)
+    public ActionResult<Author> CreateAuthor([FromBody]Author author)
     {
-        ListOfAuthors.Add(Author);
-        return CreatedAtAction(nameof(GetAuthor), new { AuthorID = Author.AuthorId }, Author);
+        context.Authors.Add(author);
+        context.SaveChanges();
+        return CreatedAtAction(nameof(GetAuthor), new { AuthorID = author.AuthorId }, author);
     }
 
-
-    [HttpDelete("{AuthorId}")]
-    public ActionResult DeleteAuthor(int id)
+    [HttpDelete("{authorid}")]
+    public ActionResult DeleteAuthor([FromRoute]int authorid)
     {
-        var author = ListOfAuthors.FirstOrDefault(a => a.AuthorId == id);
+        var author = context.Authors.Find(authorid);
         if (author == null) return NotFound();
+        context.Authors.Remove(author);
+        context.SaveChanges();
         return NoContent();
     }
 
-    [HttpPut("{AuthorId}")]
-    public ActionResult<Author> UpdateAuthor(int Id, Author UpdatedAuthor)
+    [HttpPut("{authorid}")]
+    public ActionResult<Author> UpdateAuthor([FromRoute]int authorid, [FromBody]Author updatedAuthor)
     {
-        var author = ListOfAuthors.FirstOrDefault(a => a.AuthorId == Id);
+        var author = context.Authors.Find(authorid);
         if (author == null) return NotFound();
-        author.Name = UpdatedAuthor.Name;
-        author.LastName = UpdatedAuthor.LastName;
+        author.Name = updatedAuthor.Name;
+        author.LastName = updatedAuthor.LastName;
+        context.SaveChanges();
         return Ok(author);
 
     }

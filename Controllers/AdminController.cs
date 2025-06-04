@@ -1,63 +1,64 @@
+namespace LibraryApp.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using LibraryApp.Models;
+using LibraryApp.Data;
 
 [ApiController]
 [Route("admins")]
 public class AdminController : ControllerBase
 {
 
-    List<Admin> ListOfAdmins = new List<Admin>
+    private readonly LibraryDBContext context;
+    public AdminController(LibraryDBContext context)
     {
-        new(1,"AdminName1","AdminLastName1"),
-        new(2,"AdminName2","AdminLastName2"),
-        new(3,"AdminName3","AdminLastName3"),
-        new(4,"AdminName4","AdminLastName4"),
-        new(5,"AdminName5","AdminLastName5"),
+        this.context = context;
+    }
 
-    };
 
     [HttpGet]
     public ActionResult<IEnumerable<Admin>> GetAdmins()
     {
-        return Ok(ListOfAdmins);
+        return Ok(context.Admins.ToList());
     }
 
 
-    [HttpGet("{AdminId}")]
-    public ActionResult<Admin> GetAdmin(int AdminId)
+    [HttpGet("{adminid}")]
+    public ActionResult<Admin> GetAdmin([FromRoute]int adminid)
     {
-        var admin = ListOfAdmins.FirstOrDefault(a => a.AdminId == AdminId);
+        var admin = context.Admins.Find(adminid);
         if (admin == null) return NotFound();
         return Ok(admin);
     }
 
 
-    [HttpDelete("{AdminId}")]
-    public ActionResult DeleteAdmin(int AdminId)
+    [HttpDelete("{adminid}")]
+    public ActionResult DeleteAdmin([FromRoute]int adminid)
     {
-        var admin = ListOfAdmins.FirstOrDefault(a => a.AdminId == AdminId);
+        var admin = context.Admins.Find(adminid);
         if (admin == null) return NotFound();
-        ListOfAdmins.Remove(admin);
-        return NoContent();
+        context.Remove(admin);
+        context.SaveChanges();
+        return Ok();
 
     }
 
 
     [HttpPost]
-    public ActionResult CreateAdmin(Admin Admin)
+    public ActionResult CreateAdmin([FromBody]Admin admin)
     {
-        ListOfAdmins.Add(Admin);
-        return CreatedAtAction(nameof(GetAdmin), new { AdminId = Admin.AdminId }, Admin);
+        context.Add(admin);
+        context.SaveChanges();
+        return CreatedAtAction(nameof(GetAdmin),new { AdminId = admin.AdminId }, admin);
     }
 
-    [HttpPut("{AdminId}")]
-    public ActionResult UpdateAdmin(int AdminId, Admin UpdatedAdmin)
+    [HttpPut("{adminid}")]
+    public ActionResult UpdateAdmin([FromRoute]int adminid,[FromBody] Admin updatedAdmin)
     {
-        var admin = ListOfAdmins.FirstOrDefault(a => a.AdminId == AdminId);
+        var admin = context.Admins.Find(adminid);
         if (admin == null) return NotFound();
-        admin.FirstName = UpdatedAdmin.FirstName;
-        admin.LastName = UpdatedAdmin.LastName;
-        admin.DateOfBirth = UpdatedAdmin.DateOfBirth;
+        admin.FirstName = updatedAdmin.FirstName;
+        admin.LastName = updatedAdmin.LastName;
+        context.SaveChanges();
         return Ok();
 
     }

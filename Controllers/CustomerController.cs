@@ -1,64 +1,63 @@
+namespace LibraryApp.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using LibraryApp.Models;
+using LibraryApp.Data;
 
 [ApiController]
 [Route("customers")]
 public class CustomerController : ControllerBase
 {
 
-    List<Customer> ListOfCustomers = new List<Customer>
-    {
-        new("Name1","LastName1",123456),
-        new("Name2","LastName2",987654),
-        new("Name3","LastName3",9687645),
-        new("Name4","LastName4",123778),
-        new("Name5","LastName5",798621),
+    private readonly LibraryDBContext context;
 
-    };
+    public CustomerController(LibraryDBContext context) {
+        this.context = context;
+    }
 
 
     [HttpGet]
-    public ActionResult<IEnumerable<Customer>> GetCustomers()
+    public IActionResult GetCustomers()
     {
-        return Ok(ListOfCustomers);
+        return Ok(context.Customers.ToList());
     }
 
-    [HttpGet("{JMBG}")]
-    public ActionResult<Customer> GetCustomer(int JMBG)
+    [HttpGet("{jmbg}")]
+    public ActionResult<Customer> GetCustomer([FromRoute]int jmbg)
     {
-        var customer = ListOfCustomers.FirstOrDefault(c => c.JMBG == JMBG);
+        var customer = context.Customers.ToList().FirstOrDefault(c => c.JMBG == jmbg);
         if (customer == null) return NotFound();
         return Ok(customer);
-
-
-
     }
 
-    [HttpDelete("{JMBG}")]
-    public ActionResult DeleteCustomer(int JMBG)
+    [HttpDelete("{jmbg}")]
+    public ActionResult DeleteCustomer([FromRoute]int jmbg)
     {
-        var customer = ListOfCustomers.FirstOrDefault(c => c.JMBG == JMBG);
+        var customer = context.Customers.Find(jmbg);
         if (customer == null) return NotFound();
-        ListOfCustomers.Remove(customer);
+        context.Remove(customer);
+        context.SaveChanges();
         return NoContent();
 
     }
 
     [HttpPost]
-    public ActionResult<Customer> CreateCustomer(Customer Customer)
+    public ActionResult<Customer> CreateCustomer([FromBody]Customer customer)
     {
-        ListOfCustomers.Add(Customer);
-        return CreatedAtAction(nameof(GetCustomer), new { JMBG = Customer.JMBG }, Customer);
+        context.Customers.Add(customer);
+        context.SaveChanges();
+        return CreatedAtAction(nameof(GetCustomer), new { JMBG = customer.JMBG }, customer);
     }
 
-    [HttpPut("{JMBG}")]
-    public ActionResult<Customer> UpdateCustomer(int JMBG, Customer UpdatedCustomer)
+    [HttpPut("{jmbg}")]
+    public ActionResult<Customer> UpdateCustomer([FromRoute]int jmbg,[FromBody] Customer updatedCustomer)
     {
-        var customer = ListOfCustomers.FirstOrDefault(c => c.JMBG == JMBG);
+        var customer = context.Customers.Find(jmbg);
         if (customer == null) return NotFound();
-        customer.FirstName = UpdatedCustomer.FirstName;
-        customer.LastName = UpdatedCustomer.LastName;
+        customer.FirstName = updatedCustomer.FirstName;
+        customer.LastName = updatedCustomer.LastName;
+        context.SaveChanges();
         return Ok(customer);
+
     }
 
 }
