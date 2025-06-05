@@ -4818,11 +4818,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Miljan.Mitic\\Desktop\\Library\\LibraryApp\\LibraryApp.csproj",
+      "projectUniqueName": "C:\\Users\\Miljan.Mitic\\Desktop\\Library1\\Praksa\\LibraryApp.csproj",
       "projectName": "LibraryApp",
-      "projectPath": "C:\\Users\\Miljan.Mitic\\Desktop\\Library\\LibraryApp\\LibraryApp.csproj",
+      "projectPath": "C:\\Users\\Miljan.Mitic\\Desktop\\Library1\\Praksa\\LibraryApp.csproj",
       "packagesPath": "C:\\Users\\Miljan.Mitic\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Miljan.Mitic\\Desktop\\Library\\LibraryApp\\obj\\",
+      "outputPath": "C:\\Users\\Miljan.Mitic\\Desktop\\Library1\\Praksa\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Miljan.Mitic\\AppData\\Roaming\\NuGet\\NuGet.Config"

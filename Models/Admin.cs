@@ -7,6 +7,10 @@ public class Admin
     public string LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
 
+    public Admin()
+    {
+        
+    }
     public Admin(int AdminId, string FirstName, string LastName)
     {
         this.AdminId = AdminId;

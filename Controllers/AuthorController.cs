@@ -15,25 +15,58 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Author>> GetAuthors()
+    public ActionResult<IEnumerable<AuthorDTO>> GetAuthors()
     {
-        return Ok(context.Authors.ToList());
+        var authors = from a in context.Authors
+                      select new AuthorDTO
+                      {
+                          Name = a.Name,
+                          LastName = a.LastName,
+                          DateOfBirth = a.DateOfBirth,
+                          Books = a.Books
+                      };
+
+        return Ok(authors);
     }
 
     [HttpGet("{authorid}")]
-    public ActionResult<Author> GetAuthor([FromRoute]int authorid)
+    public ActionResult<AuthorDTO> GetAuthor([FromRoute]int authorid)
     {
         var author = context.Authors.SingleOrDefault(e => e.AuthorId==authorid);        //efficient EF
+        context.Entry(author).Collection(a => a.Books).Load();
+        var authorForExit = new AuthorDTO
+        {
+            Name = author.Name,
+            LastName = author.LastName,
+            DateOfBirth = author.DateOfBirth,
+            
+        };
         if (author == null) return NotFound();
-        return Ok(author);
+        return Ok(authorForExit);
     }
 
     [HttpPost]
-    public ActionResult<Author> CreateAuthor([FromBody]Author author)
+    public ActionResult<AuthorDTO> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
     {
-        context.Authors.Add(author);
+
+        var author = new Author
+        {
+            Name = authorCreate.Name,
+            LastName = authorCreate.LastName,
+            DateOfBirth = authorCreate.DateOfBirth
+        };
+
+        context.Add(author);
         context.SaveChanges();
-        return CreatedAtAction(nameof(GetAuthor), new { AuthorID = author.AuthorId }, author);
+
+        var authorForExit = new AuthorDTO
+        {
+            Name = author.Name,
+            LastName = author.LastName,
+            DateOfBirth=author.DateOfBirth
+        };
+       
+        return CreatedAtAction(nameof(GetAuthor), new { AuthorID = author.AuthorId }, authorForExit); 
     }
 
     [HttpDelete("{authorid}")]
@@ -47,7 +80,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpPut("{authorid}")]
-    public ActionResult<Author> UpdateAuthor([FromRoute]int authorid, [FromBody]Author updatedAuthor)
+    public ActionResult<Author> UpdateAuthor([FromRoute]int authorid, [FromBody]AuthorDTO updatedAuthor)
     {
         var author = context.Authors.Find(authorid);
         if (author == null) return NotFound();

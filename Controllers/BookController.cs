@@ -1,7 +1,10 @@
 namespace LibraryApp.Controllers;
+
+using System.Data.Common;
 using LibraryApp.Data;
 using LibraryApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("books")]
@@ -16,25 +19,71 @@ public class BookController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Book>> GetBooks()
+    public ActionResult<IEnumerable<BookDTO>> GetBooks()
     {
-        return Ok(context.Books.ToList());
+        var books = from b in context.Books
+                    select new BookDTO()
+                    {
+                        Isbn = b.Isbn,
+                        Title = b.Title,
+                        Genre = b.Genre,
+                        Available = b.Available,
+                        AuthorName = b.Author == null ? "NEMA AUTORA" : b.Author.Name
+                    };
+        return Ok(books);
     }
 
     [HttpGet("{isbn}")]
-    public ActionResult<IEnumerable<Book>> GetBook([FromRoute]string Isbn)
+    public ActionResult<IEnumerable<Book>> GetBook([FromRoute] string isbn)
     {
-        var book = context.Books.Find(Isbn);
-        if (book == null) return NotFound();
+
+          var book = context.Books
+              .Where(b => b.Isbn == isbn)
+              .Select(b => new BookDTO
+                  {
+                      Isbn = b.Isbn,
+                      Title = b.Title,
+                      Genre = b.Genre,
+                      Available = b.Available,
+                      AuthorName = b.Author == null ? "NEMA AUTORA" : b.Author.Name
+                  }
+                  ).FirstOrDefault();
+        
+        
         return Ok(book);
     }
 
-    [HttpPost]
-    public ActionResult<Book> CreateBook([FromBody]Book book)
+    [HttpPost("{authorid}")]
+    public ActionResult<BookDTO> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorid)
     {
+
+        var author = context.Authors.Find(authorid);
+        if (author == null) return NotFound();
+        var book = new Book
+        {
+            Isbn = bookCreateDTO.Isbn,
+            Title = bookCreateDTO.Title,
+            Genre = bookCreateDTO.Genre,
+            Available = bookCreateDTO.Available,
+            AuthorId = authorid,
+            Author = author
+        };
+
         context.Books.Add(book);
         context.SaveChanges();
-        return Created(book.Isbn, book);
+
+        context.Entry(book).Reference(a => a.Author).Load();
+
+        var bookForExit = new BookDTO
+        {
+            Isbn = book.Isbn,
+            Title = book.Title,
+            Genre = book.Genre,
+            Available = book.Available,
+
+        };
+
+        return CreatedAtAction(nameof(GetBook), new { isbn = book.Isbn }, bookForExit);
     }
 
     [HttpDelete("{isbn}")]
@@ -48,15 +97,25 @@ public class BookController : ControllerBase
     }
 
     [HttpPut("{isbn}")]
-    public ActionResult<Book> UpdateBook([FromRoute]string isbn,[FromBody] Book updatedBook)
+    public ActionResult<BookDTO> UpdateBook([FromRoute]string isbn,[FromBody] BookUpdateDTO updatedBook)
     {
-        var book = context.Books.Find(isbn);
+        var book = context.Books.Include(b => b.Author).FirstOrDefault(b => b.Isbn == isbn);
+        if (book.Author == null) return NotFound();
         if (book == null) return NotFound();
         book.Title = updatedBook.Title;
         book.Genre = updatedBook.Genre;
         book.Available = updatedBook.Available;
         context.SaveChanges();
-        return Ok(book);
+        
+         var bookForExit = new BookDTO
+        {
+            Isbn = book.Isbn,
+            Title = book.Title,
+            Genre = book.Genre,
+            Available = book.Available,
+            AuthorName=book.Author.Name,
+        };
+        return Ok(bookForExit);
     }
 
 }

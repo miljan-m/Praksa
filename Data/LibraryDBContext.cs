@@ -29,23 +29,31 @@ public class LibraryDBContext : DbContext
         var Admin4 = new Admin(4, "Admin4Name", "Admin4LastName");
         var Admin5 = new Admin(5, "Admin5Name", "Admin5LastName");
 
-        var Book1 = new Book("Alisa u zemlji cuda", "123456oaihsf", "Avantura", true, null);
-        var Book2 = new Book("Lord of rings", "asdffrghsf", "Avantura", true, null);
-        var Book3 = new Book("Harry Potter", "127889asdihsf", "Avantura", true, null);
-        var Book4 = new Book("Murder on Nil", "deilgoihj2343", "Avantura", true, null);
-        var Book5 = new Book("Le Petite Prince", "123456oadadadasf", "Avantura", true, null);
-        var Book6 = new Book("The jungle book", "189er56oaihsf", "Avantura", true, null);
+        /* var Book1 = new Book("Alisa u zemlji cuda", "123456oaihsf", "Avantura", true, null);
+         var Book2 = new Book("Lord of rings", "asdffrghsf", "Avantura", true, null);
+         var Book3 = new Book("Harry Potter", "127889asdihsf", "Avantura", true, null);
+         var Book4 = new Book("Murder on Nil", "deilgoihj2343", "Avantura", true, null);
+         var Book5 = new Book("Le Petite Prince", "123456oadadadasf", "Avantura", true, null);
+         var Book6 = new Book("The jungle book", "189er56oaihsf", "Avantura", true, null);*/
 
-        var Customer1 = new Customer("Customer1Name", "Customer1LastName",123456);
-        var Customer2 = new Customer("Customer2Name", "Customer2LastName",239184762);
-        var Customer3 = new Customer("Customer3Name", "Customer3LastName",329456);
-        var Customer4 = new Customer("Customer4Name", "Customer4LastName",324857);
-        var Customer5 = new Customer("Customer5Name", "Customer5LastName",238476);
+        var Customer1 = new Customer("Customer1Name", "Customer1LastName", 123456);
+        var Customer2 = new Customer("Customer2Name", "Customer2LastName", 239184762);
+        var Customer3 = new Customer("Customer3Name", "Customer3LastName", 329456);
+        var Customer4 = new Customer("Customer4Name", "Customer4LastName", 324857);
+        var Customer5 = new Customer("Customer5Name", "Customer5LastName", 238476);
 
 
         modelBuilder.Entity<Author>().HasData(Author1, Author2, Author3, Author4);
         modelBuilder.Entity<Admin>().HasData(Admin1, Admin2, Admin3, Admin4, Admin5);
-        modelBuilder.Entity<Book>().HasData(Book1, Book2, Book3, Book4, Book5, Book6);
+       
+        modelBuilder.Entity<Book>().HasData(
+        new Book { Title = "Alisa u zemlji cuda", Isbn = "123456oaihsf", Genre = "Avantura" ,Available=true},
+        new Book { Title = "Lord of rings", Isbn = "asdffrghsf", Genre = "Avantura",Available=true },
+        new Book { Title = "Harry Potter", Isbn = "127889asdihsf", Genre = "Avantura",Available=true },
+        new Book { Title = "Murder on Nil", Isbn = "deilgoihj2343", Genre = "Avantura" ,Available=true},
+        new Book { Title = "Le Petite Prince", Isbn = "123456oadadadasf", Genre = "Avantura",Available=true },
+        new Book{Title="The jungle book", Isbn="189er56oaihsf", Genre="Avantura",Available=true});
+
         modelBuilder.Entity<Customer>().HasData(Customer1, Customer2, Customer3, Customer4, Customer5);
 
     }

@@ -16,18 +16,32 @@ public class AdminController : ControllerBase
 
 
     [HttpGet]
-    public ActionResult<IEnumerable<Admin>> GetAdmins()
+    public ActionResult<IEnumerable<AdminDTO>> GetAdmins()
     {
-        return Ok(context.Admins.ToList());
+        var admins = from a in context.Admins
+                     select new AdminDTO
+                     {
+                         FirstName = a.FirstName,
+                         LastName = a.LastName,
+                         DateOfBirth = a.DateOfBirth
+                     };
+
+        return Ok(admins);
     }
 
 
     [HttpGet("{adminid}")]
-    public ActionResult<Admin> GetAdmin([FromRoute]int adminid)
+    public ActionResult<AdminDTO> GetAdmin([FromRoute]int adminid)
     {
         var admin = context.Admins.Find(adminid);
         if (admin == null) return NotFound();
-        return Ok(admin);
+        var adminForExit = new AdminDTO
+        {
+            FirstName = admin.FirstName,
+            LastName = admin.LastName,
+            DateOfBirth=admin.DateOfBirth
+        };
+        return Ok(adminForExit);
     }
 
 
@@ -44,20 +58,30 @@ public class AdminController : ControllerBase
 
 
     [HttpPost]
-    public ActionResult CreateAdmin([FromBody]Admin admin)
+    public ActionResult<AdminDTO> CreateAdmin([FromBody] AdminDTO CreateAdminDTO)
     {
+
+        var admin = new Admin
+        {
+            FirstName = CreateAdminDTO.FirstName,
+            LastName = CreateAdminDTO.LastName,
+            DateOfBirth = CreateAdminDTO.DateOfBirth
+        };
+
         context.Add(admin);
         context.SaveChanges();
-        return CreatedAtAction(nameof(GetAdmin),new { AdminId = admin.AdminId }, admin);
+        return Ok(CreateAdminDTO);
+
     }
 
     [HttpPut("{adminid}")]
-    public ActionResult UpdateAdmin([FromRoute]int adminid,[FromBody] Admin updatedAdmin)
+    public ActionResult UpdateAdmin([FromRoute]int adminid,[FromBody] AdminDTO updatedAdmin)
     {
         var admin = context.Admins.Find(adminid);
         if (admin == null) return NotFound();
         admin.FirstName = updatedAdmin.FirstName;
         admin.LastName = updatedAdmin.LastName;
+        admin.DateOfBirth = updatedAdmin.DateOfBirth;
         context.SaveChanges();
         return Ok();
 

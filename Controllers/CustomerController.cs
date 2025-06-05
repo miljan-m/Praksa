@@ -18,13 +18,24 @@ public class CustomerController : ControllerBase
     [HttpGet]
     public IActionResult GetCustomers()
     {
-        return Ok(context.Customers.ToList());
+        var customers = context.Customers.Select(c => new CustomerDTO
+        {
+            FirstName = c.FirstName,
+            LastName = c.LastName
+        });
+
+        return Ok(customers);
     }
 
     [HttpGet("{jmbg}")]
     public ActionResult<Customer> GetCustomer([FromRoute]int jmbg)
     {
-        var customer = context.Customers.ToList().FirstOrDefault(c => c.JMBG == jmbg);
+        //var customer = context.Customers.ToList().FirstOrDefault(c => c.JMBG == jmbg);
+        var customer = context.Customers.Where(c => c.JMBG == jmbg).Select(c => new CustomerDTO
+        {
+            FirstName = c.FirstName,
+            LastName=c.LastName
+        }).FirstOrDefault();
         if (customer == null) return NotFound();
         return Ok(customer);
     }
@@ -41,22 +52,27 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<Customer> CreateCustomer([FromBody]Customer customer)
+    public ActionResult<CustomerDTO> CreateCustomer([FromBody]CustomerDTO customerToCreate)
     {
+        var customer = new Customer
+        {
+            FirstName = customerToCreate.FirstName,
+            LastName = customerToCreate.LastName
+        };
         context.Customers.Add(customer);
         context.SaveChanges();
-        return CreatedAtAction(nameof(GetCustomer), new { JMBG = customer.JMBG }, customer);
+        return CreatedAtAction(nameof(GetCustomer), new { JMBG = customer.JMBG }, customerToCreate);
     }
 
     [HttpPut("{jmbg}")]
-    public ActionResult<Customer> UpdateCustomer([FromRoute]int jmbg,[FromBody] Customer updatedCustomer)
+    public ActionResult<Customer> UpdateCustomer([FromRoute]int jmbg,[FromBody] CustomerDTO updatedCustomerDTO)
     {
         var customer = context.Customers.Find(jmbg);
         if (customer == null) return NotFound();
-        customer.FirstName = updatedCustomer.FirstName;
-        customer.LastName = updatedCustomer.LastName;
+        customer.FirstName = updatedCustomerDTO.FirstName;
+        customer.LastName = updatedCustomerDTO.LastName;
         context.SaveChanges();
-        return Ok(customer);
+        return Ok(updatedCustomerDTO);
 
     }
 
