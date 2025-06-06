@@ -1,4 +1,4 @@
-using LibraryApp.ExtensionClasses;
+using LibraryApp.Mappers;
 
 namespace LibraryApp.Controllers;
 
@@ -15,15 +15,15 @@ public class AdminController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<AdminDTO>> GetAdmins()
     {
-        var admins = context.getAllAdmins();
-
+        var admins = context.Admins.Select(a => a.MapDomainEntityToDTO());
         return Ok(admins);
     }
 
-    [HttpGet("{adminid}")]
-    public ActionResult<AdminDTO> GetAdmin([FromRoute]int adminid)
+    [HttpGet("{adminId}")]
+    public ActionResult<AdminDTO> GetAdmin([FromRoute]int adminId)
     {
-        var admin = context.getOneAdminDTO(adminid);
+        var admin = context.Admins.Find(adminId);
+        admin.MapDomainEntityToDTO();
         if (admin == null) return NotFound();
         return Ok(admin);
     }
@@ -40,24 +40,29 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<AdminDTO> CreateAdmin([FromBody] AdminDTO CreateAdminDTO)
+    public ActionResult<AdminDTO> CreateAdmin([FromBody] AdminDTO CreateAdminDto)
     {
 
-        var admin = CreateAdminDTO.mapDtoToAdmin();
+        var admin = CreateAdminDto.MapDtoToDomainEntity();
         context.Add(admin);
         context.SaveChanges();
-        return Ok(CreateAdminDTO);
+        return Ok(CreateAdminDto);
 
     }
 
     [HttpPut("{adminid}")]
-    public ActionResult UpdateAdmin([FromRoute]int adminid,[FromBody] AdminDTO updatedAdmin)
+    public ActionResult<AdminDTO> UpdateAdmin([FromRoute]int adminid,[FromBody] AdminDTO updatedAdmin)
     {
         var admin = context.Admins.Find(adminid);
         if (admin == null) return NotFound();
-        admin.UpdateAdminMapping(updatedAdmin);
+
+        admin.FirstName = updatedAdmin.FirstName;
+        admin.LastName = updatedAdmin.LastName;
+        admin.DateOfBirth = updatedAdmin.DateOfBirth;
+       
         context.SaveChanges();
-        return Ok();
+
+        return Ok(admin.MapDomainEntityToDTO());
 
     }
 }

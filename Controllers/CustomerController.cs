@@ -1,4 +1,4 @@
-using LibraryApp.ExtensionClasses;
+using LibraryApp.Mappers;
 
 namespace LibraryApp.Controllers;
 
@@ -15,16 +15,17 @@ public class CustomerController : ControllerBase
     [HttpGet]
     public IActionResult GetCustomers()
     {
-        var customers = context.GetAllCustomers();
+        var customers = context.Customers.Select(c => c.MapDomainEntityToDTO());
         return Ok(customers);
     }
 
     [HttpGet("{jmbg}")]
     public ActionResult<CustomerDTO> GetCustomer([FromRoute]int jmbg)
     {
-        var customer = context.GetOneCustomer(jmbg);
+        var customer = context.Customers.Find(jmbg);
+        var customerDto=customer.MapDomainEntityToDTO();
         if (customer == null) return NotFound();
-        return Ok(customer);
+        return Ok(customerDto);
     }
 
     [HttpDelete("{jmbg}")]
@@ -40,20 +41,23 @@ public class CustomerController : ControllerBase
     [HttpPost]
     public ActionResult<CustomerDTO> CreateCustomer([FromBody]CustomerDTO customerToCreate)
     {
-        var customer = customerToCreate.MapDtoToCustomer();
+        var customer = customerToCreate.MapDtoToDomainEntity();
         context.Customers.Add(customer);
         context.SaveChanges();
         return CreatedAtAction(nameof(GetCustomer), new { JMBG = customer.JMBG }, customerToCreate);
     }
 
     [HttpPut("{jmbg}")]
-    public ActionResult<Customer> UpdateCustomer([FromRoute]int jmbg,[FromBody] CustomerDTO updatedCustomerDTO)
+    public ActionResult<CustomerDTO> UpdateCustomer([FromRoute]int jmbg,[FromBody] CustomerDTO updatedCustomerDTO)
     {
         var customer = context.Customers.Find(jmbg);
         if (customer == null) return NotFound();
-        customer.UpdateCustomerMapping(updatedCustomerDTO);
+
+        customer.FirstName = updatedCustomerDTO.FirstName;
+        customer.LastName = updatedCustomerDTO.LastName;
+
         context.SaveChanges();
-        return Ok(updatedCustomerDTO);
+        return Ok(customer.MapDomainEntityToDTO());
 
     }
 }

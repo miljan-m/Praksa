@@ -1,4 +1,4 @@
-using LibraryApp.ExtensionClasses;
+using LibraryApp.Mappers;
 
 namespace LibraryApp.Controllers;
 
@@ -16,32 +16,31 @@ public class BookController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<BookDTO>> GetBooks()
     {
-        var books = context.GetAllBooks();
+        var books = context.Books.Select(b => b.MapDomainEntityToDTO());
         return Ok(books);
     }
 
     [HttpGet("{isbn}")]
-    public ActionResult<IEnumerable<BookDTO>> GetBook([FromRoute] string isbn)
+    public ActionResult<BookDTO> GetBook([FromRoute] string isbn)
     {
-        var book = context.GetOneBook(isbn);
+        var book = context.Books
+                    .Where(b => b.Isbn == isbn)
+                    .Select(b => b.MapDomainEntityToDTO());
         return Ok(book);
     }
 
-    [HttpPost("{authorid}")]
-    public ActionResult<BookDTO> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorid)
+    [HttpPost("{authorId}")]
+    public ActionResult<BookDTO> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorId)
     {
-        var author = context.Authors.Find(authorid);
+        var author = context.Authors.Find(authorId);
         if (author == null) return NotFound();
-        var book = ExtensionBookMethods.MapDtoToBook(bookCreateDTO, author);
+        var book = bookCreateDTO.MapDtoToDomainEntity(author);
 
         context.Books.Add(book);
         context.SaveChanges();
 
-        context.Entry(book).Reference(a => a.Author).Load();
-
-        var bookForExit = author.MapAuthorToDTO();
-
-        return CreatedAtAction(nameof(GetBook), new { isbn = book.Isbn }, bookForExit);
+        var toRetBook = book.MapDomainEntityToDTO();
+        return CreatedAtAction(nameof(GetBook), new { isbn = book.Isbn }, toRetBook);
     }
 
     [HttpDelete("{isbn}")]
@@ -57,15 +56,18 @@ public class BookController : ControllerBase
     [HttpPut("{isbn}")]
     public ActionResult<BookDTO> UpdateBook([FromRoute] string isbn, [FromBody] BookUpdateDTO updatedBook)
     {
-        var book = context.GetFullBook(isbn);
-        if (book.Author == null) return NotFound();
+        var book = context.Books
+                    .Include(a => a.Author)
+                    .FirstOrDefault(b => b.Isbn == isbn);
         if (book == null) return NotFound();
+        if (book.Author == null) return NotFound();
+
         book.Title = updatedBook.Title;
         book.Genre = updatedBook.Genre;
         book.Available = updatedBook.Available;
         context.SaveChanges();
 
-        var bookForExit = book.MapBookToBookDTO();
+        var bookForExit = book.MapDomainEntityToDTO();
         return Ok(bookForExit);
     }
 
