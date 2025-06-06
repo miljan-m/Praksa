@@ -1,49 +1,32 @@
+using LibraryApp.ExtensionClasses;
+
 namespace LibraryApp.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using LibraryApp.Models;
-using LibraryApp.Data;
 
 [ApiController]
 [Route("admins")]
 public class AdminController : ControllerBase
 {
-
     private readonly LibraryDBContext context;
     public AdminController(LibraryDBContext context)
     {
         this.context = context;
     }
 
-
     [HttpGet]
     public ActionResult<IEnumerable<AdminDTO>> GetAdmins()
     {
-        var admins = from a in context.Admins
-                     select new AdminDTO
-                     {
-                         FirstName = a.FirstName,
-                         LastName = a.LastName,
-                         DateOfBirth = a.DateOfBirth
-                     };
+        var admins = context.getAllAdmins();
 
         return Ok(admins);
     }
 
-
     [HttpGet("{adminid}")]
     public ActionResult<AdminDTO> GetAdmin([FromRoute]int adminid)
     {
-        var admin = context.Admins.Find(adminid);
+        var admin = context.getOneAdminDTO(adminid);
         if (admin == null) return NotFound();
-        var adminForExit = new AdminDTO
-        {
-            FirstName = admin.FirstName,
-            LastName = admin.LastName,
-            DateOfBirth=admin.DateOfBirth
-        };
-        return Ok(adminForExit);
+        return Ok(admin);
     }
-
 
     [HttpDelete("{adminid}")]
     public ActionResult DeleteAdmin([FromRoute]int adminid)
@@ -56,18 +39,11 @@ public class AdminController : ControllerBase
 
     }
 
-
     [HttpPost]
     public ActionResult<AdminDTO> CreateAdmin([FromBody] AdminDTO CreateAdminDTO)
     {
 
-        var admin = new Admin
-        {
-            FirstName = CreateAdminDTO.FirstName,
-            LastName = CreateAdminDTO.LastName,
-            DateOfBirth = CreateAdminDTO.DateOfBirth
-        };
-
+        var admin = CreateAdminDTO.mapDtoToAdmin();
         context.Add(admin);
         context.SaveChanges();
         return Ok(CreateAdminDTO);
@@ -79,12 +55,9 @@ public class AdminController : ControllerBase
     {
         var admin = context.Admins.Find(adminid);
         if (admin == null) return NotFound();
-        admin.FirstName = updatedAdmin.FirstName;
-        admin.LastName = updatedAdmin.LastName;
-        admin.DateOfBirth = updatedAdmin.DateOfBirth;
+        admin.UpdateAdminMapping(updatedAdmin);
         context.SaveChanges();
         return Ok();
 
     }
-
 }

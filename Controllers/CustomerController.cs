@@ -1,41 +1,28 @@
+using LibraryApp.ExtensionClasses;
+
 namespace LibraryApp.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using LibraryApp.Models;
-using LibraryApp.Data;
 
 [ApiController]
 [Route("customers")]
 public class CustomerController : ControllerBase
 {
-
     private readonly LibraryDBContext context;
 
     public CustomerController(LibraryDBContext context) {
         this.context = context;
     }
 
-
     [HttpGet]
     public IActionResult GetCustomers()
     {
-        var customers = context.Customers.Select(c => new CustomerDTO
-        {
-            FirstName = c.FirstName,
-            LastName = c.LastName
-        });
-
+        var customers = context.GetAllCustomers();
         return Ok(customers);
     }
 
     [HttpGet("{jmbg}")]
-    public ActionResult<Customer> GetCustomer([FromRoute]int jmbg)
+    public ActionResult<CustomerDTO> GetCustomer([FromRoute]int jmbg)
     {
-        //var customer = context.Customers.ToList().FirstOrDefault(c => c.JMBG == jmbg);
-        var customer = context.Customers.Where(c => c.JMBG == jmbg).Select(c => new CustomerDTO
-        {
-            FirstName = c.FirstName,
-            LastName=c.LastName
-        }).FirstOrDefault();
+        var customer = context.GetOneCustomer(jmbg);
         if (customer == null) return NotFound();
         return Ok(customer);
     }
@@ -48,17 +35,12 @@ public class CustomerController : ControllerBase
         context.Remove(customer);
         context.SaveChanges();
         return NoContent();
-
     }
 
     [HttpPost]
     public ActionResult<CustomerDTO> CreateCustomer([FromBody]CustomerDTO customerToCreate)
     {
-        var customer = new Customer
-        {
-            FirstName = customerToCreate.FirstName,
-            LastName = customerToCreate.LastName
-        };
+        var customer = customerToCreate.MapDtoToCustomer();
         context.Customers.Add(customer);
         context.SaveChanges();
         return CreatedAtAction(nameof(GetCustomer), new { JMBG = customer.JMBG }, customerToCreate);
@@ -69,11 +51,9 @@ public class CustomerController : ControllerBase
     {
         var customer = context.Customers.Find(jmbg);
         if (customer == null) return NotFound();
-        customer.FirstName = updatedCustomerDTO.FirstName;
-        customer.LastName = updatedCustomerDTO.LastName;
+        customer.UpdateCustomerMapping(updatedCustomerDTO);
         context.SaveChanges();
         return Ok(updatedCustomerDTO);
 
     }
-
 }
