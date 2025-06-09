@@ -15,14 +15,19 @@ public class RequestResponseLoggingMiddleware
 
 
     public async Task InvokeAsync(HttpContext context)
-    {   if (context.Request.Method == HttpMethods.Post &&
-        context.Request.Path.Equals("/authors", StringComparison.OrdinalIgnoreCase))
+    {   if ((context.Request.Method == HttpMethods.Get || context.Request.Method == HttpMethods.Post
+    || context.Request.Method == HttpMethods.Delete ||context.Request.Method == HttpMethods.Put) && (context.Request.Path.StartsWithSegments("/authors")
+    || context.Request.Path.StartsWithSegments("/books") || context.Request.Path.StartsWithSegments("/admins")
+     || context.Request.Path.StartsWithSegments("/customers"))  )
         {
             context.Request.EnableBuffering();
             context.Request.Body.Position = 0;
             using var requestBodyStream = new StreamReader(context.Request.Body, leaveOpen: true);
             string requestBodyText = await requestBodyStream.ReadToEndAsync();
             context.Request.Body.Position = 0;
+
+            var headers = context.Request.Headers.Select(h=>$"{h.Key}:{h.Value}").ToList();
+            logger.LogInformation("{Headers}\n", string.Join("\n", headers));
 
             logger.LogInformation("Request Body: {requestBodyText}", requestBodyText);
 
