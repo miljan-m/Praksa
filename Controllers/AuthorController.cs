@@ -1,14 +1,12 @@
+using LibraryApp.Mappers;
+using LibraryApp.DTOs;
 namespace LibraryApp.Controllers;
-using LibraryApp.Data;
-using LibraryApp.Models;
-using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("authors")]
 public class AuthorController : ControllerBase
 {
     private readonly LibraryDBContext context;
-
     public AuthorController(LibraryDBContext context)
     {
         this.context = context;
@@ -17,77 +15,54 @@ public class AuthorController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<AuthorDTO>> GetAuthors()
     {
-        var authors = from a in context.Authors
-                      select new AuthorDTO
-                      {
-                          Name = a.Name,
-                          LastName = a.LastName,
-                          DateOfBirth = a.DateOfBirth,
-                          Books = a.Books
-                      };
-
+        var authors = context.Authors.Select(a => a.MapDomainEntityToDto());
         return Ok(authors);
     }
 
-    [HttpGet("{authorid}")]
-    public ActionResult<AuthorDTO> GetAuthor([FromRoute]int authorid)
+    [HttpGet("{authorId}")]
+    public ActionResult<AuthorDTO> GetAuthor([FromRoute]int authorId)
     {
-        var author = context.Authors.SingleOrDefault(e => e.AuthorId==authorid);        //efficient EF
-        context.Entry(author).Collection(a => a.Books).Load();
-        var authorForExit = new AuthorDTO
-        {
-            Name = author.Name,
-            LastName = author.LastName,
-            DateOfBirth = author.DateOfBirth,
-            
-        };
-        if (author == null) return NotFound();
-        return Ok(authorForExit);
+        var authorDto = context.Authors
+                    .Include(a => a.Books)
+                    .Where(a => a.AuthorId == authorId).Select(a => a.MapDomainEntityToDto())
+                    .FirstOrDefault();
+                    
+        return Ok(authorDto);
     }
 
     [HttpPost]
     public ActionResult<AuthorDTO> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
     {
-
-        var author = new Author
-        {
-            Name = authorCreate.Name,
-            LastName = authorCreate.LastName,
-            DateOfBirth = authorCreate.DateOfBirth
-        };
-
+        var author = authorCreate.MapDtoToDomainEntity();
         context.Add(author);
         context.SaveChanges();
-
-        var authorForExit = new AuthorDTO
-        {
-            Name = author.Name,
-            LastName = author.LastName,
-            DateOfBirth=author.DateOfBirth
-        };
-       
-        return CreatedAtAction(nameof(GetAuthor), new { AuthorID = author.AuthorId }, authorForExit); 
+        var authorDto = author.MapDomainEntityToDto();
+        return CreatedAtAction(nameof(GetAuthor), new { AuthorID = author.AuthorId }, authorDto); 
     }
 
-    [HttpDelete("{authorid}")]
-    public ActionResult DeleteAuthor([FromRoute]int authorid)
+    [HttpDelete("{authorId}")]
+    public ActionResult DeleteAuthor([FromRoute]int authorId)
     {
-        var author = context.Authors.Find(authorid);
+        var author = context.Authors.Find(authorId);
         if (author == null) return NotFound();
         context.Authors.Remove(author);
         context.SaveChanges();
         return NoContent();
     }
 
-    [HttpPut("{authorid}")]
-    public ActionResult<Author> UpdateAuthor([FromRoute]int authorid, [FromBody]AuthorDTO updatedAuthor)
+    [HttpPut("{authorId}")]
+    public ActionResult<Author> UpdateAuthor([FromRoute]int authorId, [FromBody]AuthorUpdateDTO updatedAuthor)
     {
-        var author = context.Authors.Find(authorid);
+        var author = context.Authors.Find(authorId);
         if (author == null) return NotFound();
+        
         author.Name = updatedAuthor.Name;
         author.LastName = updatedAuthor.LastName;
+        author.DateOfBirth = updatedAuthor.DateOfBirth;
         context.SaveChanges();
-        return Ok(author);
+
+        var toRetAuthor = author.MapDomainEntityToDto();
+        return Ok(toRetAuthor);
 
     }
 }
