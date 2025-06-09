@@ -1,4 +1,5 @@
 using LibraryApp.Data;
+using LibraryApp.MiddlewaresExtensionMethods;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseRequestResponseLogging();
 
 app.MapControllers();
 
