@@ -1,5 +1,6 @@
 
 namespace LibraryApp.Mappers;
+using LibraryApp.DTOs;
 
 public static class AdminMethods
 {

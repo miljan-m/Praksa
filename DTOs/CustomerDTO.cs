@@ -1,6 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 
-namespace LibraryApp.Models;
+namespace LibraryApp.DTOs;
 
 public class CustomerDTO
 {

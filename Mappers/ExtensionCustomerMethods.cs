@@ -1,3 +1,5 @@
+using LibraryApp.DTOs;
+
 namespace LibraryApp.Mappers;
 
 public static class ExtensionCustomerMethods

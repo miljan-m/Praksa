@@ -1,4 +1,4 @@
-namespace LibraryApp.Models;
+namespace LibraryApp.DTOs;
 
 public class AdminDTO
 {

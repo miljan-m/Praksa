@@ -1,5 +1,5 @@
 using LibraryApp.Mappers;
-
+using LibraryApp.DTOs;
 namespace LibraryApp.Controllers;
 
 [ApiController]
@@ -42,12 +42,10 @@ public class AdminController : ControllerBase
     [HttpPost]
     public ActionResult<AdminDTO> CreateAdmin([FromBody] AdminDTO CreateAdminDto)
     {
-
         var admin = CreateAdminDto.MapDtoToDomainEntity();
         context.Add(admin);
         context.SaveChanges();
         return Ok(CreateAdminDto);
-
     }
 
     [HttpPut("{adminid}")]

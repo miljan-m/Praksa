@@ -1,5 +1,5 @@
 using LibraryApp.Mappers;
-
+using LibraryApp.DTOs;
 namespace LibraryApp.Controllers;
 
 [ApiController]
@@ -22,12 +22,11 @@ public class AuthorController : ControllerBase
     [HttpGet("{authorId}")]
     public ActionResult<AuthorDTO> GetAuthor([FromRoute]int authorId)
     {
-        var author = context.Authors
+        var authorDto = context.Authors
                     .Include(a => a.Books)
-                    .Where(a => a.AuthorId == authorId)
+                    .Where(a => a.AuthorId == authorId).Select(a => a.MapDomainEntityToDto())
                     .FirstOrDefault();
                     
-        var authorDto=author.MapDomainEntityToDto();
         return Ok(authorDto);
     }
 

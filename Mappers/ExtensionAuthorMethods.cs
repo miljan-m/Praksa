@@ -1,3 +1,5 @@
+using LibraryApp.DTOs;
+
 namespace LibraryApp.Mappers;
 
 public static class ExtensionAuthorMethods
@@ -18,11 +20,11 @@ public static class ExtensionAuthorMethods
         {
             Name = authorDto.Name,
             LastName = authorDto.LastName,
-            DateOfBirth=authorDto.DateOfBirth
+            DateOfBirth = authorDto.DateOfBirth
         };
 
     }
 
-   
+
 
 }

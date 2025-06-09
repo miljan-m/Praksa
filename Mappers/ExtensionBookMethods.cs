@@ -1,8 +1,10 @@
+using LibraryApp.DTOs;
+
 namespace LibraryApp.Mappers;
 
 public static class ExtensionBookMethods
 {
-    public static Book MapDtoToDomainEntity(this BookCreateDTO bookDTO,Author author)
+    public static Book MapDtoToDomainEntity(this BookCreateDTO bookDTO, Author author)
     {
         return new Book
         {
@@ -27,6 +29,6 @@ public static class ExtensionBookMethods
         };
     }
 
-    
+
 
 }

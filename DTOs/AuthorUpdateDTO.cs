@@ -1,6 +1,6 @@
-namespace LibraryApp.Models;
+namespace LibraryApp.DTOs;
 
-public class AuthorCreateDTO
+public class AuthorUpdateDTO
 {
     public string Name { get; set; }
     public string LastName { get; set; }
