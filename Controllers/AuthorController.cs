@@ -3,6 +3,9 @@ using LibraryApp.DTOs;
 namespace LibraryApp.Controllers;
 
 [ApiController]
+
+
+
 [Route("authors")]
 public class AuthorController : ControllerBase
 {
@@ -63,6 +66,5 @@ public class AuthorController : ControllerBase
 
         var toRetAuthor = author.MapDomainEntityToDto();
         return Ok(toRetAuthor);
-
     }
 }
