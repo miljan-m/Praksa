@@ -1,5 +1,7 @@
 using LibraryApp.Mappers;
 using LibraryApp.DTOs;
+using LibraryApp.Services;
+using System.Threading.Tasks;
 
 namespace LibraryApp.Controllers;
 
@@ -8,56 +10,50 @@ namespace LibraryApp.Controllers;
 public class CustomerController : ControllerBase
 {
     private readonly LibraryDBContext context;
-
-    public CustomerController(LibraryDBContext context) {
+    private readonly ICustomerService customerService;
+    public CustomerController(LibraryDBContext context, ICustomerService customerService) {
         this.context = context;
+        this.customerService = customerService;
     }
 
     [HttpGet]
-    public IActionResult GetCustomers()
+    public async Task<IActionResult> GetCustomers()
     {
-        var customers = context.Customers.Select(c => c.MapDomainEntityToDTO());
+        var customers =await customerService.GetCustomers();
+        var customersDto = customers.Select(c => c.MapDomainEntityToDTO());
         return Ok(customers);
     }
 
     [HttpGet("{jmbg}")]
-    public ActionResult<CustomerDTO> GetCustomer([FromRoute]int jmbg)
+    public async Task<ActionResult<CustomerDTO>> GetCustomer([FromRoute]int jmbg)
     {
-        var customer = context.Customers.Find(jmbg);
+        var customer =await customerService.getCustomer(jmbg);
         var customerDto=customer.MapDomainEntityToDTO();
         if (customer == null) return NotFound();
         return Ok(customerDto);
     }
 
     [HttpDelete("{jmbg}")]
-    public ActionResult DeleteCustomer([FromRoute]int jmbg)
+    public async Task<ActionResult> DeleteCustomer([FromRoute] int jmbg)
     {
-        var customer = context.Customers.Find(jmbg);
-        if (customer == null) return NotFound();
-        context.Remove(customer);
-        context.SaveChanges();
-        return NoContent();
+        var isDeleted = await customerService.DeleteCustomer(jmbg);
+        if (isDeleted) return NoContent();
+        return NotFound();
     }
 
     [HttpPost]
-    public ActionResult<CustomerDTO> CreateCustomer([FromBody]CustomerDTO customerToCreate)
+    public async Task<ActionResult<CustomerDTO>> CreateCustomer([FromBody] CustomerDTO customerToCreate)
     {
-        var customer = customerToCreate.MapDtoToDomainEntity();
-        context.Customers.Add(customer);
-        context.SaveChanges();
-        return CreatedAtAction(nameof(GetCustomer), new { JMBG = customer.JMBG }, customerToCreate);
+        var createdCustomer = await customerService.CreateCustomer(customerToCreate);
+        var createdCustomerDto = createdCustomer.MapDomainEntityToDTO();
+        return CreatedAtAction(nameof(GetCustomer),new{jmbg=createdCustomer.JMBG}, createdCustomerDto);
+    
     }
 
     [HttpPut("{jmbg}")]
-    public ActionResult<CustomerDTO> UpdateCustomer([FromRoute]int jmbg,[FromBody] CustomerDTO updatedCustomerDTO)
+    public async Task<ActionResult<CustomerDTO>> UpdateCustomer([FromRoute]int jmbg,[FromBody] CustomerDTO updatedCustomerDTO)
     {
-        var customer = context.Customers.Find(jmbg);
-        if (customer == null) return NotFound();
-
-        customer.FirstName = updatedCustomerDTO.FirstName;
-        customer.LastName = updatedCustomerDTO.LastName;
-
-        context.SaveChanges();
+        var customer = await customerService.UpdateCustomer(updatedCustomerDTO, jmbg);
         return Ok(customer.MapDomainEntityToDTO());
 
     }

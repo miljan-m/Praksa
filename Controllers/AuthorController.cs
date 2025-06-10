@@ -1,5 +1,8 @@
 using LibraryApp.Mappers;
 using LibraryApp.DTOs;
+using LibraryApp.Services;
+using System.Threading.Tasks;
+
 namespace LibraryApp.Controllers;
 
 [ApiController]
@@ -9,62 +12,47 @@ namespace LibraryApp.Controllers;
 [Route("authors")]
 public class AuthorController : ControllerBase
 {
-    private readonly LibraryDBContext context;
-    public AuthorController(LibraryDBContext context)
+    private readonly IAuthorService authorService;
+    public AuthorController(IAuthorService authorService)
     {
-        this.context = context;
+        this.authorService = authorService;
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<AuthorDTO>> GetAuthors()
+    public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
     {
-        var authors = context.Authors.Select(a => a.MapDomainEntityToDto());
-        return Ok(authors);
+        var authors = await authorService.GetAuthors();
+        return Ok(authors.Select(a => a.MapDomainEntityToDto()));
     }
 
     [HttpGet("{authorId}")]
-    public ActionResult<AuthorDTO> GetAuthor([FromRoute]int authorId)
+    public async Task<ActionResult<AuthorDTO>> GetAuthor([FromRoute] int authorId)
     {
-        var authorDto = context.Authors
-                    .Include(a => a.Books)
-                    .Where(a => a.AuthorId == authorId).Select(a => a.MapDomainEntityToDto())
-                    .FirstOrDefault();
-                    
-        return Ok(authorDto);
+        var author = await authorService.GetAuthor(authorId);
+        if (author == null) return NotFound();
+        return Ok(author.MapDomainEntityToDto());
     }
 
     [HttpPost]
-    public ActionResult<AuthorDTO> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
+    public async Task<ActionResult<AuthorDTO>> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
     {
-        var author = authorCreate.MapDtoToDomainEntity();
-        context.Add(author);
-        context.SaveChanges();
-        var authorDto = author.MapDomainEntityToDto();
-        return CreatedAtAction(nameof(GetAuthor), new { AuthorID = author.AuthorId }, authorDto); 
+        var author = await authorService.CreateAuthor(authorCreate);
+        return CreatedAtAction(nameof(GetAuthor),new {authorId=author.AuthorId } ,author.MapDomainEntityToDto());
     }
 
     [HttpDelete("{authorId}")]
-    public ActionResult DeleteAuthor([FromRoute]int authorId)
+    public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)
     {
-        var author = context.Authors.Find(authorId);
-        if (author == null) return NotFound();
-        context.Authors.Remove(author);
-        context.SaveChanges();
+        var isDeleted = await authorService.DeleteAuthor(authorId);
+        if (isDeleted == false) return NotFound();
         return NoContent();
     }
 
     [HttpPut("{authorId}")]
-    public ActionResult<Author> UpdateAuthor([FromRoute]int authorId, [FromBody]AuthorUpdateDTO updatedAuthor)
+    public async Task<ActionResult<Author>> UpdateAuthor([FromRoute] int authorId, [FromBody] AuthorUpdateDTO updatedAuthor)
     {
-        var author = context.Authors.Find(authorId);
+        var author = await authorService.UpdateAuthor(authorId, updatedAuthor);
         if (author == null) return NotFound();
-        
-        author.Name = updatedAuthor.Name;
-        author.LastName = updatedAuthor.LastName;
-        author.DateOfBirth = updatedAuthor.DateOfBirth;
-        context.SaveChanges();
-
-        var toRetAuthor = author.MapDomainEntityToDto();
-        return Ok(toRetAuthor);
+        return Ok(author.MapDomainEntityToDto());
     }
 }

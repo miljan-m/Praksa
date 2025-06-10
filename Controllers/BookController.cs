@@ -1,5 +1,6 @@
 using LibraryApp.Mappers;
 using LibraryApp.DTOs;
+using LibraryApp.Services;
 
 namespace LibraryApp.Controllers;
 
@@ -7,67 +8,47 @@ namespace LibraryApp.Controllers;
 [Route("books")]
 public class BookController : ControllerBase
 {
-    private readonly LibraryDBContext context;
-
-    public BookController(LibraryDBContext context)
+    private readonly IBookService bookService;
+    public BookController(IBookService bookService)
     {
-        this.context = context;
+        this.bookService = bookService;
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<BookDTO>> GetBooks()
+    public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
     {
-        var books = context.Books.Select(b => b.MapDomainEntityToDTO());
-        return Ok(books);
+        var books = await bookService.GetBooks();
+        var allBooks = books.Select(b => b.MapDomainEntityToDTO());
+        return Ok(allBooks);
     }
 
     [HttpGet("{isbn}")]
-    public ActionResult<BookDTO> GetBook([FromRoute] string isbn)
+    public async Task<ActionResult<Book>> GetBook([FromRoute] string isbn)
     {
-        var book = context.Books
-                    .Where(b => b.Isbn == isbn)
-                    .Select(b => b.MapDomainEntityToDTO());
-        return Ok(book);
+        var book =await bookService.GetBook(isbn);
+        var bookDto = book.MapDomainEntityToDTO();
+        return Ok(bookDto);
     }
 
     [HttpPost("{authorId}")]
-    public ActionResult<BookDTO> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorId)
+    public async Task<ActionResult<BookDTO>> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorId)
     {
-        var author = context.Authors.Find(authorId);
-        if (author == null) return NotFound();
-        var book = bookCreateDTO.MapDtoToDomainEntity(author);
-
-        context.Books.Add(book);
-        context.SaveChanges();
-
-        var toRetBook = book.MapDomainEntityToDTO();
-        return CreatedAtAction(nameof(GetBook), new { isbn = book.Isbn }, toRetBook);
+        var toRetBook =await bookService.CreateBook( bookCreateDTO, authorId);
+        return CreatedAtAction(nameof(GetBook), new { isbn = toRetBook.Isbn }, toRetBook);
     }
 
     [HttpDelete("{isbn}")]
-    public ActionResult<Book> DeleteBook([FromRoute] string isbn)
+    public async Task<IActionResult> DeleteBook([FromRoute] string isbn)
     {
-        var book = context.Books.Find(isbn);
-        if (book == null) return NotFound();
-        context.Books.Remove(book);
-        context.SaveChanges();
-        return Ok();
+        var book = await bookService.DeleteBook( isbn);
+        if (book == false) return NotFound();
+        return NoContent();
     }
 
     [HttpPut("{isbn}")]
-    public ActionResult<BookDTO> UpdateBook([FromRoute] string isbn, [FromBody] BookUpdateDTO updatedBook)
+    public async Task<ActionResult<BookDTO>> UpdateBook([FromRoute] string isbn, [FromBody] BookUpdateDTO updatedBook)
     {
-        var book = context.Books
-                    .Include(a => a.Author)
-                    .FirstOrDefault(b => b.Isbn == isbn);
-        if (book == null) return NotFound();
-        if (book.Author == null) return NotFound();
-
-        book.Title = updatedBook.Title;
-        book.Genre = updatedBook.Genre;
-        book.Available = updatedBook.Available;
-        context.SaveChanges();
-
+        var book =await bookService.UpdateBook(isbn,updatedBook);
         var bookForExit = book.MapDomainEntityToDTO();
         return Ok(bookForExit);
     }

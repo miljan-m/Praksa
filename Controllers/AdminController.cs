@@ -1,65 +1,60 @@
 using LibraryApp.Mappers;
 using LibraryApp.DTOs;
+using LibraryApp.Services;
+using System.Threading.Tasks;
+
 namespace LibraryApp.Controllers;
 
 [ApiController]
 [Route("admins")]
 public class AdminController : ControllerBase
 {
-    private readonly LibraryDBContext context;
-    public AdminController(LibraryDBContext context)
+
+    private readonly IAdminService adminService;
+
+    public AdminController(IAdminService adminService)
     {
-        this.context = context;
+        this.adminService = adminService;
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<AdminDTO>> GetAdmins()
+    public async Task<ActionResult<IEnumerable<AdminDTO>>> GetAdmins()
     {
-        var admins = context.Admins.Select(a => a.MapDomainEntityToDTO());
-        return Ok(admins);
+        var admins = await adminService.GetAdmins();
+        var adminsDto = admins.Select(a => a.MapDomainEntityToDTO());
+        return Ok(adminsDto);
     }
 
     [HttpGet("{adminId}")]
-    public ActionResult<AdminDTO> GetAdmin([FromRoute]int adminId)
+    public async Task<ActionResult<AdminDTO>> GetAdmin([FromRoute] int adminId)
     {
-        var admin = context.Admins.Find(adminId);
-        admin.MapDomainEntityToDTO();
-        if (admin == null) return NotFound();
-        return Ok(admin);
+        var admin = await adminService.GetAdmin(adminId);
+        var adminDto = admin.MapDomainEntityToDTO();
+        return Ok(adminDto);
     }
 
-    [HttpDelete("{adminid}")]
-    public ActionResult DeleteAdmin([FromRoute]int adminid)
+    [HttpDelete("{adminId}")]
+    public async Task<ActionResult> DeleteAdmin([FromRoute]int adminId)
     {
-        var admin = context.Admins.Find(adminid);
-        if (admin == null) return NotFound();
-        context.Remove(admin);
-        context.SaveChanges();
-        return Ok();
+        var isDeleted =await adminService.DeleteAdmin(adminId);
+        if (isDeleted) return Ok();
+        return NotFound();
 
     }
 
     [HttpPost]
-    public ActionResult<AdminDTO> CreateAdmin([FromBody] AdminDTO CreateAdminDto)
+    public async Task<ActionResult<AdminDTO>> CreateAdmin([FromBody] AdminDTO createAdminDto)
     {
-        var admin = CreateAdminDto.MapDtoToDomainEntity();
-        context.Add(admin);
-        context.SaveChanges();
-        return Ok(CreateAdminDto);
+        var admin = await adminService.CreateAdmin(createAdminDto);
+        var adminDto = admin.MapDomainEntityToDTO();
+        return CreatedAtAction(nameof(CreateAdmin), new { adminId = admin.AdminId }, adminDto);
     }
 
-    [HttpPut("{adminid}")]
-    public ActionResult<AdminDTO> UpdateAdmin([FromRoute]int adminid,[FromBody] AdminDTO updatedAdmin)
+    [HttpPut("{adminId}")]
+    public async Task<ActionResult<AdminDTO>> UpdateAdmin([FromRoute] int adminId, [FromBody] AdminDTO updatedAdmin)
     {
-        var admin = context.Admins.Find(adminid);
+        var admin = await adminService.UpdateAdmin(adminId, updatedAdmin);
         if (admin == null) return NotFound();
-
-        admin.FirstName = updatedAdmin.FirstName;
-        admin.LastName = updatedAdmin.LastName;
-        admin.DateOfBirth = updatedAdmin.DateOfBirth;
-       
-        context.SaveChanges();
-
         return Ok(admin.MapDomainEntityToDTO());
 
     }
