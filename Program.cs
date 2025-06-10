@@ -1,13 +1,14 @@
 using LibraryApp.MiddlewaresExtensionMethods;
 using LibraryApp.Services;
+using LibraryApp.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<IBookService, Book>();
-builder.Services.AddScoped<ICustomerService, Customer>();
-builder.Services.AddScoped<IAdminService, Admin>();
-builder.Services.AddScoped<IAuthorService, Author>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 
 

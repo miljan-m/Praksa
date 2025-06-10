@@ -20,17 +20,15 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> GetCustomers()
     {
         var customers =await customerService.GetCustomers();
-        var customersDto = customers.Select(c => c.MapDomainEntityToDTO());
         return Ok(customers);
     }
 
     [HttpGet("{jmbg}")]
     public async Task<ActionResult<CustomerDTO>> GetCustomer([FromRoute]int jmbg)
     {
-        var customer =await customerService.getCustomer(jmbg);
-        var customerDto=customer.MapDomainEntityToDTO();
+        var customer =await customerService.GetCustomer(jmbg);
         if (customer == null) return NotFound();
-        return Ok(customerDto);
+        return Ok(customer);
     }
 
     [HttpDelete("{jmbg}")]
@@ -54,7 +52,7 @@ public class CustomerController : ControllerBase
     public async Task<ActionResult<CustomerDTO>> UpdateCustomer([FromRoute]int jmbg,[FromBody] CustomerDTO updatedCustomerDTO)
     {
         var customer = await customerService.UpdateCustomer(updatedCustomerDTO, jmbg);
-        return Ok(customer.MapDomainEntityToDTO());
+        return Ok(customer);
 
     }
 }

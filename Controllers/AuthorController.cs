@@ -22,7 +22,7 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
     {
         var authors = await authorService.GetAuthors();
-        return Ok(authors.Select(a => a.MapDomainEntityToDto()));
+        return Ok(authors);
     }
 
     [HttpGet("{authorId}")]
@@ -30,7 +30,7 @@ public class AuthorController : ControllerBase
     {
         var author = await authorService.GetAuthor(authorId);
         if (author == null) return NotFound();
-        return Ok(author.MapDomainEntityToDto());
+        return Ok(author);
     }
 
     [HttpPost]
@@ -53,6 +53,6 @@ public class AuthorController : ControllerBase
     {
         var author = await authorService.UpdateAuthor(authorId, updatedAuthor);
         if (author == null) return NotFound();
-        return Ok(author.MapDomainEntityToDto());
+        return Ok(author);
     }
 }

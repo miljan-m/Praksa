@@ -18,16 +18,14 @@ public class BookController : ControllerBase
     public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
     {
         var books = await bookService.GetBooks();
-        var allBooks = books.Select(b => b.MapDomainEntityToDTO());
-        return Ok(allBooks);
+        return Ok(books);
     }
 
     [HttpGet("{isbn}")]
     public async Task<ActionResult<Book>> GetBook([FromRoute] string isbn)
     {
         var book =await bookService.GetBook(isbn);
-        var bookDto = book.MapDomainEntityToDTO();
-        return Ok(bookDto);
+        return Ok(book);
     }
 
     [HttpPost("{authorId}")]
@@ -49,8 +47,7 @@ public class BookController : ControllerBase
     public async Task<ActionResult<BookDTO>> UpdateBook([FromRoute] string isbn, [FromBody] BookUpdateDTO updatedBook)
     {
         var book =await bookService.UpdateBook(isbn,updatedBook);
-        var bookForExit = book.MapDomainEntityToDTO();
-        return Ok(bookForExit);
+        return Ok(book);
     }
 
 }

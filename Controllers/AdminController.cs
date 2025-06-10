@@ -20,16 +20,14 @@ public class AdminController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AdminDTO>>> GetAdmins()
     {
-        var admins = await adminService.GetAdmins();
-        var adminsDto = admins.Select(a => a.MapDomainEntityToDTO());
+        var adminsDto = await adminService.GetAdmins();
         return Ok(adminsDto);
     }
 
     [HttpGet("{adminId}")]
     public async Task<ActionResult<AdminDTO>> GetAdmin([FromRoute] int adminId)
     {
-        var admin = await adminService.GetAdmin(adminId);
-        var adminDto = admin.MapDomainEntityToDTO();
+        var adminDto = await adminService.GetAdmin(adminId);
         return Ok(adminDto);
     }
 
@@ -55,7 +53,7 @@ public class AdminController : ControllerBase
     {
         var admin = await adminService.UpdateAdmin(adminId, updatedAdmin);
         if (admin == null) return NotFound();
-        return Ok(admin.MapDomainEntityToDTO());
+        return Ok(admin);
 
     }
 }
