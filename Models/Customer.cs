@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using LibraryApp.DTOs;
+using LibraryApp.Mappers;
+using LibraryApp.Services;
 
 namespace LibraryApp.Models;
 
-public class Customer
+public class Customer 
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -11,7 +14,7 @@ public class Customer
 
     public Customer()
     {
-        
+
     }
     public Customer(string FirstName, string LastName, int JMBG)
     {

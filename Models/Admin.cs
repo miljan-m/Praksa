@@ -1,3 +1,7 @@
+using LibraryApp.DTOs;
+using LibraryApp.Mappers;
+using LibraryApp.Services;
+
 namespace LibraryApp.Models;
 
 public class Admin
@@ -6,10 +10,9 @@ public class Admin
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
-
     public Admin()
     {
-        
+
     }
     public Admin(int AdminId, string FirstName, string LastName)
     {

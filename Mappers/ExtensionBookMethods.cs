@@ -25,7 +25,6 @@ public static class ExtensionBookMethods
             Title = book.Title,
             Genre = book.Genre,
             Available = book.Available,
-            AuthorName = book.Author.Name
         };
     }
 

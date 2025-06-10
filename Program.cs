@@ -1,10 +1,16 @@
-using LibraryApp.Data;
 using LibraryApp.MiddlewaresExtensionMethods;
-using Microsoft.EntityFrameworkCore;
+using LibraryApp.Services;
+using LibraryApp.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
