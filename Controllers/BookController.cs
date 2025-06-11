@@ -1,6 +1,7 @@
 using LibraryApp.Mappers;
 using LibraryApp.DTOs;
 using LibraryApp.Services;
+using LibraryApp.DTOs.RequestDTO.Book;
 
 namespace LibraryApp.Controllers;
 
@@ -15,21 +16,21 @@ public class BookController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
+    public async Task<ActionResult<IEnumerable<GetBooksDTO>>> GetBooks()
     {
         var books = await bookService.GetBooks();
         return Ok(books);
     }
 
     [HttpGet("{isbn}")]
-    public async Task<ActionResult<Book>> GetBook([FromRoute] string isbn)
+    public async Task<ActionResult<GetBookDTO>> GetBook([FromRoute] string isbn)
     {
         var book =await bookService.GetBook(isbn);
         return Ok(book);
     }
 
     [HttpPost("{authorId}")]
-    public async Task<ActionResult<BookDTO>> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorId)
+    public async Task<ActionResult<GetBookDTO>> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorId)
     {
         var toRetBook =await bookService.CreateBook( bookCreateDTO, authorId);
         return CreatedAtAction(nameof(GetBook), new { isbn = toRetBook.Isbn }, toRetBook);
@@ -44,9 +45,10 @@ public class BookController : ControllerBase
     }
 
     [HttpPut("{isbn}")]
-    public async Task<ActionResult<BookDTO>> UpdateBook([FromRoute] string isbn, [FromBody] BookUpdateDTO updatedBook)
+    public async Task<ActionResult<GetBookDTO>> UpdateBook([FromRoute] string isbn, [FromBody] BookUpdateDTO updatedBook)
     {
         var book =await bookService.UpdateBook(isbn,updatedBook);
+        if (book == null) return NotFound();
         return Ok(book);
     }
 

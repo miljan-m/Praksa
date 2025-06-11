@@ -1,4 +1,6 @@
 using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.Author;
+using LibraryApp.DTOs.ResponseDTO.Author;
 using LibraryApp.Mappers;
 
 namespace LibraryApp.Services.Implementations;
@@ -12,9 +14,9 @@ public class AuthorService : IAuthorService
         this.context = context;
     }
    
-    public async Task<IEnumerable<AuthorDTO>> GetAuthors()
+    public async Task<IEnumerable<GetAuthorsDTO>> GetAuthors()
     {
-        return await context.Authors.Select(a => a.MapDomainEntityToDto()).ToListAsync();
+        return await context.Authors.Select(a => a.MapDomainEntitiesToDto()).ToListAsync();
     }
 
     public async Task<Author> GetAuthor(int authorId)
@@ -41,7 +43,7 @@ public class AuthorService : IAuthorService
         return author;
     }
 
-    public async Task<AuthorDTO> UpdateAuthor(int authorId, AuthorUpdateDTO updatedAuthor)
+    public async Task<GetAuthorDTO> UpdateAuthor(int authorId, AuthorUpdateDTO updatedAuthor)
     {
         var author = await context.Authors.FindAsync(authorId);
         if (author == null) return null;

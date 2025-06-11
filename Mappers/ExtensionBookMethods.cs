@@ -1,4 +1,5 @@
 using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.Book;
 
 namespace LibraryApp.Mappers;
 
@@ -18,9 +19,34 @@ public static class ExtensionBookMethods
         };
     }
 
-    public static BookDTO MapDomainEntityToDTO(this Book book)
+    public static Book MapDtoToDomainEntity(this BookUpdateDTO bookDTO, Author author)
     {
-        return new BookDTO
+
+        return new Book
+        {
+            Title = bookDTO.Title,
+            Genre = bookDTO.Genre,
+            Available = bookDTO.Available,
+            AuthorId = author.AuthorId,
+            Author = author
+        };
+    }
+
+    public static GetBooksDTO MapDomainEntitiesToDTO(this Book book)
+    {
+        return new GetBooksDTO
+        {
+            Isbn = book.Isbn,
+            Title = book.Title,
+            Genre = book.Genre,
+            Available = book.Available,
+            AuthorName = book.Author != null ? book.Author.Name + " " + book.Author.LastName : "NO AUTHOR"
+        };
+    }
+
+    public static GetBookDTO MapDomainEntityToDTO(this Book book)
+    {
+        return new GetBookDTO
         {
             Isbn = book.Isbn,
             Title = book.Title,
@@ -28,9 +54,6 @@ public static class ExtensionBookMethods
             Available = book.Available,
             AuthorName = book.Author!=null ? book.Author.Name+" "+book.Author.LastName : "NO AUTHOR"
         };     
-        
     }
-
-
 
 }

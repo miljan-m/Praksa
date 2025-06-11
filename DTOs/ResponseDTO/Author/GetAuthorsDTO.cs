@@ -1,6 +1,6 @@
-namespace LibraryApp.DTOs;
+namespace LibraryApp.DTOs.ResponseDTO.Author;
 
-public class AuthorDTO
+public class GetAuthorsDTO
 {
     public string Name { get; set; }
     public string LastName { get; set; }

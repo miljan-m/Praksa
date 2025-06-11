@@ -1,4 +1,4 @@
-namespace LibraryApp.DTOs;
+namespace LibraryApp.DTOs.RequestDTO.Author;
 
 public class AuthorUpdateDTO
 {

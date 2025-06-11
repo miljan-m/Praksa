@@ -1,6 +1,6 @@
 namespace LibraryApp.DTOs;
 
-public class SpecialEditionBookDTO : BookDTO
+public class SpecialEditionBookDTO : GetBookDTO
 {
     public int InStorage { get; set; }
     private string autograph;
