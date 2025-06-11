@@ -1,4 +1,6 @@
 using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.Customer;
+using LibraryApp.DTOs.ResponseDTO.Customer;
 using LibraryApp.Mappers;
 
 namespace LibraryApp.Services.Implementations;
@@ -15,12 +17,12 @@ public class CustomerService : ICustomerService
 
     
 
-    public async Task<IEnumerable<CustomerDTO>> GetCustomers()
+    public async Task<IEnumerable<GetCustomersDTO>> GetCustomers()
     {
-        return await contex.Customers.Select(c=>c.MapDomainEntityToDTO()).ToListAsync();
+        return await contex.Customers.Select(c=>c.MapDomainEntitiesToDTO()).ToListAsync();
     }
 
-    public async Task<CustomerDTO> GetCustomer(int jmbg)
+    public async Task<GetCustomerDTO> GetCustomer(int jmbg)
     {
         return await contex.Customers.Where(c=>c.JMBG==jmbg).Select(c=>c.MapDomainEntityToDTO()).FirstOrDefaultAsync();
     }
@@ -34,17 +36,17 @@ public class CustomerService : ICustomerService
         return true;
     }
 
-    public async Task<CustomerDTO> UpdateCustomer(CustomerDTO updatedCustomer, int jmbg)
+    public async Task<UpdateCustomerDTO> UpdateCustomer(UpdateCustomerDTO updatedCustomer, int jmbg)
     {
         var customer = await contex.Customers.FindAsync(jmbg);
         if (customer == null) return null;
         customer.FirstName = updatedCustomer.FirstName;
         customer.LastName = updatedCustomer.LastName;
         await contex.SaveChangesAsync();
-        return customer.MapDomainEntityToDTO();   
+        return updatedCustomer;   
     }
 
-    public async Task<Customer> CreateCustomer(CustomerDTO customer)
+    public async Task<Customer> CreateCustomer(CreateCustomerDTO customer)
     {
         var nonDtoCustomer = customer.MapDtoToDomainEntity();
         await contex.Customers.AddAsync(nonDtoCustomer);

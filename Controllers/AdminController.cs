@@ -2,6 +2,8 @@ using LibraryApp.Mappers;
 using LibraryApp.DTOs;
 using LibraryApp.Services;
 using System.Threading.Tasks;
+using LibraryApp.DTOs.ResponseDTO.Admin;
+using LibraryApp.DTOs.RequestDTO.Admin;
 
 namespace LibraryApp.Controllers;
 
@@ -18,14 +20,14 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AdminDTO>>> GetAdmins()
+    public async Task<ActionResult<IEnumerable<GetAdminsDTO>>> GetAdmins()
     {
         var adminsDto = await adminService.GetAdmins();
         return Ok(adminsDto);
     }
 
     [HttpGet("{adminId}")]
-    public async Task<ActionResult<AdminDTO>> GetAdmin([FromRoute] int adminId)
+    public async Task<ActionResult<GetAdminDTO>> GetAdmin([FromRoute] int adminId)
     {
         var adminDto = await adminService.GetAdmin(adminId);
         return Ok(adminDto);
@@ -41,15 +43,14 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<AdminDTO>> CreateAdmin([FromBody] AdminDTO createAdminDto)
+    public async Task<ActionResult<GetAdminDTO>> CreateAdmin([FromBody] CreateAdminDTO createAdminDto)
     {
         var admin = await adminService.CreateAdmin(createAdminDto);
-        var adminDto = admin.MapDomainEntityToDTO();
-        return CreatedAtAction(nameof(CreateAdmin), new { adminId = admin.AdminId }, adminDto);
+        return CreatedAtAction(nameof(CreateAdmin), new { adminId = admin.AdminId }, admin.MapDomainEntityToDTO());
     }
 
     [HttpPut("{adminId}")]
-    public async Task<ActionResult<AdminDTO>> UpdateAdmin([FromRoute] int adminId, [FromBody] AdminDTO updatedAdmin)
+    public async Task<ActionResult<GetAdminDTO>> UpdateAdmin([FromRoute] int adminId, [FromBody] UpdateAdminDTO updatedAdmin)
     {
         var admin = await adminService.UpdateAdmin(adminId, updatedAdmin);
         if (admin == null) return NotFound();

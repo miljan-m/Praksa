@@ -1,6 +1,6 @@
-namespace LibraryApp.DTOs;
+namespace LibraryApp.DTOs.RequestDTO.SpecialEditionBook;
 
-public class SpecialEditionBookCreateDTO
+public class UpdateSpecialBookDTO
 {
     public string Title { get; set; }
     public string Genre { get; set; }

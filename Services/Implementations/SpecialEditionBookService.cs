@@ -1,4 +1,6 @@
 using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.SpecialEditionBook;
+using LibraryApp.DTOs.ResponseDTO.SpecialEditionBook;
 using LibraryApp.Mappers;
 
 namespace LibraryApp.Services.Implementations;
@@ -13,12 +15,12 @@ public class SpecialEditionBookService : ISpecialEditionBookService
     }
 
 
-    public async Task<IEnumerable<SpecialEditionBookDTO>> GetBooks()
+    public async Task<IEnumerable<GetSpecialBooksDTO>> GetBooks()
     {
-        return await context.Books.OfType<SpecialEditionBook>().Select(b=>b.MapDomainEntityToDto()).ToListAsync();
+        return await context.Books.OfType<SpecialEditionBook>().Select(b=>b.MapDomainEntitiesToDto()).ToListAsync();
     }
 
-    public Task<SpecialEditionBookDTO> GetBook(string isbn)
+    public Task<GetSpecialBookDTO> GetBook(string isbn)
     {
         return context.Books.OfType<SpecialEditionBook>().Where(b => b.Isbn == isbn).Select(b=>b.MapDomainEntityToDto()).FirstOrDefaultAsync();
     }
@@ -31,7 +33,7 @@ public class SpecialEditionBookService : ISpecialEditionBookService
         await context.SaveChangesAsync();
         return true;
     }
-    public async Task<SpecialEditionBookDTO> CreateBook(SpecialEditionBookCreateDTO bookCreateDTO, int authorId)
+    public async Task<GetSpecialBookDTO> CreateBook(CreateSpecialBookDTO bookCreateDTO, int authorId)
     {
         var author = await context.Authors.FindAsync(authorId);
         if (author == null) return null;
@@ -41,7 +43,7 @@ public class SpecialEditionBookService : ISpecialEditionBookService
         return book.MapDomainEntityToDto();
     }
 
-    public async Task<SpecialEditionBookDTO> UpdateBook(string isbn, SpecialEditionBookCreateDTO updatedBook)
+    public async Task<GetSpecialBookDTO> UpdateBook(string isbn, UpdateSpecialBookDTO updatedBook)
     {
         var specialBook = await context.Books.OfType<SpecialEditionBook>().Include(b => b.Author).Where(b => b.Isbn == isbn).FirstOrDefaultAsync();
         if (specialBook == null) return null;

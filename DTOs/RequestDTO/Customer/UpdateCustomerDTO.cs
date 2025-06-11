@@ -1,7 +1,6 @@
+namespace LibraryApp.DTOs.RequestDTO.Customer;
 
-namespace LibraryApp.DTOs;
-
-public class CustomerDTO
+public class UpdateCustomerDTO
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

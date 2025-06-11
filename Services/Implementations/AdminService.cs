@@ -1,4 +1,6 @@
 using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.Admin;
+using LibraryApp.DTOs.ResponseDTO.Admin;
 using LibraryApp.Mappers;
 
 namespace LibraryApp.Services.Implementations;
@@ -13,12 +15,12 @@ public class AdminService : IAdminService
         this.context = context;
     }
     
-    public async Task<IEnumerable<AdminDTO>> GetAdmins()
+    public async Task<IEnumerable<GetAdminsDTO>> GetAdmins()
     {
-        return await context.Admins.Select(a => a.MapDomainEntityToDTO()).ToListAsync();
+        return await context.Admins.Select(a => a.MapDomainEntitiesToDTO()).ToListAsync();
     }
 
-    public async Task<AdminDTO> GetAdmin(int adminId)
+    public async Task<GetAdminDTO> GetAdmin(int adminId)
     {
         return await context.Admins.Where(a => a.AdminId == adminId).Select(a => a.MapDomainEntityToDTO()).FirstOrDefaultAsync();
     }
@@ -32,7 +34,7 @@ public class AdminService : IAdminService
         return true;
     }
 
-    public async Task<AdminDTO> UpdateAdmin(int adminId, AdminDTO adminDto)
+    public async Task<GetAdminDTO> UpdateAdmin(int adminId, UpdateAdminDTO adminDto)
     {
         var admin = await context.Admins.FindAsync(adminId);
         if (admin == null) return null;
@@ -43,7 +45,7 @@ public class AdminService : IAdminService
         return admin.MapDomainEntityToDTO();
     }
 
-    public async Task<Admin> CreateAdmin(AdminDTO adminDto)
+    public async Task<Admin> CreateAdmin(CreateAdminDTO adminDto)
     {
         var admin = adminDto.MapDtoToDomainEntity();
         await context.Admins.AddAsync(admin);

@@ -2,6 +2,8 @@ using LibraryApp.Mappers;
 using LibraryApp.DTOs;
 using LibraryApp.Services;
 using System.Threading.Tasks;
+using LibraryApp.DTOs.ResponseDTO.Customer;
+using LibraryApp.DTOs.RequestDTO.Customer;
 
 namespace LibraryApp.Controllers;
 
@@ -22,7 +24,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{jmbg}")]
-    public async Task<ActionResult<CustomerDTO>> GetCustomer([FromRoute]int jmbg)
+    public async Task<ActionResult<GetCustomerDTO>> GetCustomer([FromRoute]int jmbg)
     {
         var customer =await customerService.GetCustomer(jmbg);
         if (customer == null) return NotFound();
@@ -38,19 +40,17 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CustomerDTO>> CreateCustomer([FromBody] CustomerDTO customerToCreate)
+    public async Task<ActionResult<CreateCustomerDTO>> CreateCustomer([FromBody] CreateCustomerDTO customerToCreate)
     {
         var createdCustomer = await customerService.CreateCustomer(customerToCreate);
         var createdCustomerDto = createdCustomer.MapDomainEntityToDTO();
         return CreatedAtAction(nameof(GetCustomer),new{jmbg=createdCustomer.JMBG}, createdCustomerDto);
-    
     }
 
     [HttpPut("{jmbg}")]
-    public async Task<ActionResult<CustomerDTO>> UpdateCustomer([FromRoute]int jmbg,[FromBody] CustomerDTO updatedCustomerDTO)
+    public async Task<ActionResult<UpdateCustomerDTO>> UpdateCustomer([FromRoute]int jmbg,[FromBody] UpdateCustomerDTO updatedCustomerDTO)
     {
         var customer = await customerService.UpdateCustomer(updatedCustomerDTO, jmbg);
         return Ok(customer);
-
     }
 }
