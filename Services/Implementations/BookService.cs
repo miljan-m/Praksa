@@ -14,12 +14,12 @@ public class BookService : IBookService
 
     public async Task<IEnumerable<BookDTO>> GetBooks()
     {
-        return await context.Books.Select(b=>b.MapDomainEntityToDTO()).ToListAsync();
+        return await context.Books.OfType<Book>().Include(a=>a.Author).Select(b=>b.MapDomainEntityToDTO()).ToListAsync();
     }
 
-     public async Task<BookDTO> GetBook(string isbn)
+    public async Task<BookDTO> GetBook(string isbn)
     {
-        return await context.Books.Where(b=>b.Isbn==isbn).Select(b=>b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        return await context.Books.Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
     }
 
     public async Task<BookDTO> CreateBook(BookCreateDTO bookCreateDTO, int authorId)

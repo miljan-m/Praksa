@@ -6,6 +6,7 @@ public static class ExtensionBookMethods
 {
     public static Book MapDtoToDomainEntity(this BookCreateDTO bookDTO, Author author)
     {
+
         return new Book
         {
             Isbn = bookDTO.Isbn,
@@ -25,7 +26,9 @@ public static class ExtensionBookMethods
             Title = book.Title,
             Genre = book.Genre,
             Available = book.Available,
-        };
+            AuthorName = book.Author!=null ? book.Author.Name+" "+book.Author.LastName : "NO AUTHOR"
+        };     
+        
     }
 
 

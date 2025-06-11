@@ -35,6 +35,7 @@ public class LibraryDBContext : DbContext
         var Customer4 = new Customer("Customer4Name", "Customer4LastName", 324857);
         var Customer5 = new Customer("Customer5Name", "Customer5LastName", 238476);
 
+        modelBuilder.Entity<Book>().HasDiscriminator<string>("Discriminator").HasValue<Book>("Book").HasValue<SpecialEditionBook>("Special");
         modelBuilder.Entity<Author>().HasData(Author1, Author2, Author3, Author4);
         modelBuilder.Entity<Admin>().HasData(Admin1, Admin2, Admin3, Admin4, Admin5);
        
@@ -44,10 +45,10 @@ public class LibraryDBContext : DbContext
         new Book { Title = "Harry Potter", Isbn = "127889asdihsf", Genre = "Avantura",Available=true },
         new Book { Title = "Murder on Nil", Isbn = "deilgoihj2343", Genre = "Avantura" ,Available=true},
         new Book { Title = "Le Petite Prince", Isbn = "123456oadadadasf", Genre = "Avantura",Available=true },
-        new Book{Title="The jungle book", Isbn="189er56oaihsf", Genre="Avantura",Available=true});
+        new Book {Title="The jungle book", Isbn="189er56oaihsf", Genre="Avantura",Available=true});
 
         modelBuilder.Entity<Customer>().HasData(Customer1, Customer2, Customer3, Customer4, Customer5);
-
+        
     }
 
 }

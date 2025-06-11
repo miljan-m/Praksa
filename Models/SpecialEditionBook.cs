@@ -2,10 +2,11 @@ using LibraryApp.Models.IDomain;
 
 namespace LibraryApp.Models;
 
-public class SpecialEditionBook : Book,IBook
+public class SpecialEditionBook : Book, IBook
 {
-    public int InStorage { get; set; } = 10;
-    private string Autograph { get; set; }
+    public int InStorage { get; set; }
+    private string autograph;
+    public string Autograph { get => autograph; set => autograph = value; }
 
     public override string BookDetails()
     {

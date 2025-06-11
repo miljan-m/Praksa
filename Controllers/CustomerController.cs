@@ -9,10 +9,8 @@ namespace LibraryApp.Controllers;
 [Route("customers")]
 public class CustomerController : ControllerBase
 {
-    private readonly LibraryDBContext context;
     private readonly ICustomerService customerService;
-    public CustomerController(LibraryDBContext context, ICustomerService customerService) {
-        this.context = context;
+    public CustomerController(ICustomerService customerService) {
         this.customerService = customerService;
     }
 

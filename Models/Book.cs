@@ -10,7 +10,7 @@ namespace LibraryApp.Models;
 public class Book : IBook
 {
     [Key]
-    public string Isbn { get; set; }
+    public string Isbn { get; set; }=Guid.NewGuid().ToString();
     public string Title { get; set; }
 
     public string Genre { get; set; }
