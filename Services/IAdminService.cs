@@ -1,12 +1,14 @@
 using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.Admin;
+using LibraryApp.DTOs.ResponseDTO.Admin;
 
 namespace LibraryApp.Services;
 
 public interface IAdminService
 {
-    public Task<IEnumerable<AdminDTO>> GetAdmins();
-    public Task<AdminDTO> GetAdmin(int adminId);
+    public Task<IEnumerable<GetAdminsDTO>> GetAdmins();
+    public Task<GetAdminDTO> GetAdmin(int adminId);
     public Task<bool> DeleteAdmin(int adminId);
-    public Task<AdminDTO> UpdateAdmin(int adminId, AdminDTO adminDto);
-    public Task<Admin> CreateAdmin(AdminDTO adminDto);
+    public Task<GetAdminDTO> UpdateAdmin(int adminId, UpdateAdminDTO adminDto);
+    public Task<Admin> CreateAdmin(CreateAdminDTO adminDto);
 }

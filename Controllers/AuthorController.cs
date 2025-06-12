@@ -1,7 +1,7 @@
 using LibraryApp.Mappers;
-using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.Author;
 using LibraryApp.Services;
-using System.Threading.Tasks;
+using LibraryApp.DTOs.ResponseDTO.Author;
 
 namespace LibraryApp.Controllers;
 
@@ -19,14 +19,14 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
+    public async Task<ActionResult<IEnumerable<GetAuthorsDTO>>> GetAuthors()
     {
         var authors = await authorService.GetAuthors();
         return Ok(authors);
     }
 
     [HttpGet("{authorId}")]
-    public async Task<ActionResult<AuthorDTO>> GetAuthor([FromRoute] int authorId)
+    public async Task<ActionResult<GetAuthorDTO>> GetAuthor([FromRoute] int authorId)
     {
         var author = await authorService.GetAuthor(authorId);
         if (author == null) return NotFound();
@@ -34,7 +34,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<AuthorDTO>> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
+    public async Task<ActionResult<GetAuthorDTO>> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
     {
         var author = await authorService.CreateAuthor(authorCreate);
         return CreatedAtAction(nameof(GetAuthor),new {authorId=author.AuthorId } ,author.MapDomainEntityToDto());
@@ -49,7 +49,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpPut("{authorId}")]
-    public async Task<ActionResult<Author>> UpdateAuthor([FromRoute] int authorId, [FromBody] AuthorUpdateDTO updatedAuthor)
+    public async Task<ActionResult<GetAuthorDTO>> UpdateAuthor([FromRoute] int authorId, [FromBody] AuthorUpdateDTO updatedAuthor)
     {
         var author = await authorService.UpdateAuthor(authorId, updatedAuthor);
         if (author == null) return NotFound();

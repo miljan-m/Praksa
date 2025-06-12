@@ -1,4 +1,5 @@
 using LibraryApp.DTOs;
+using LibraryApp.DTOs.RequestDTO.Book;
 using LibraryApp.Mappers;
 
 namespace LibraryApp.Services.Implementations;
@@ -12,17 +13,17 @@ public class BookService : IBookService
         this.context = context;
     }
 
-    public async Task<IEnumerable<BookDTO>> GetBooks()
+    public async Task<IEnumerable<GetBooksDTO>> GetBooks()
     {
-        return await context.Books.Select(b=>b.MapDomainEntityToDTO()).ToListAsync();
+        return await context.Books.OfType<Book>().Include(a=>a.Author).Select(b=>b.MapDomainEntitiesToDTO()).ToListAsync();
     }
 
-     public async Task<BookDTO> GetBook(string isbn)
+    public async Task<GetBookDTO> GetBook(string isbn)
     {
-        return await context.Books.Where(b=>b.Isbn==isbn).Select(b=>b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        return await context.Books.Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
     }
 
-    public async Task<BookDTO> CreateBook(BookCreateDTO bookCreateDTO, int authorId)
+    public async Task<GetBookDTO> CreateBook(BookCreateDTO bookCreateDTO, int authorId)
     {
         var author = await context.Authors.FindAsync(authorId);
         if (author == null) return null;
@@ -44,13 +45,13 @@ public class BookService : IBookService
 
     }
 
-    public  async Task<BookDTO> UpdateBook(string isbn, BookUpdateDTO updatedBook)
+    public  async Task<GetBookDTO> UpdateBook(string isbn, BookUpdateDTO updatedBook)
     {
         var book =  context.Books
+                    .OfType<Book>()
                     .Include(a => a.Author)
                     .FirstOrDefault(b => b.Isbn == isbn);
         if (book == null) return null;
-        if (book.Author == null) return null;
 
         book.Title = updatedBook.Title;
         book.Genre = updatedBook.Genre;

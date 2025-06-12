@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibraryApp.DTOs;
 
-public class BookDTO
+public class GetBookDTO
 {
     [Key]
     public string Isbn { get; set; }
