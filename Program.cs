@@ -1,6 +1,7 @@
 using LibraryApp.MiddlewaresExtensionMethods;
 using LibraryApp.Services;
 using LibraryApp.Services.Implementations;
+using Microsoft.OpenApi.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,17 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options=>options.AddDocumentTransformer((document,context,CancellationToken)=>
+{
+    document.Info.Title = "My Library App";
+    document.Info.Contact = new OpenApiContact()
+    {
+        Email = "miljan@gmail.com",
+        Name = "Miljan"
+    };
+    document.Info.Description = "This is my librarry app";
+    return Task.CompletedTask;
+}));
 
 
 builder.Services.AddDbContext<LibraryDBContext>(options =>
