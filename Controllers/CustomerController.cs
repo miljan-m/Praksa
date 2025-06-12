@@ -17,21 +17,27 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet]
+    [EndpointSummary("Get all existing customers")]
+    [EndpointDescription("This endpoint returns list of all customers. Informations about JMBG are excluded")]
     public async Task<IActionResult> GetCustomers()
     {
-        var customers =await customerService.GetCustomers();
+        var customers = await customerService.GetCustomers();
         return Ok(customers);
     }
 
     [HttpGet("{jmbg}")]
-    public async Task<ActionResult<GetCustomerDTO>> GetCustomer([FromRoute]int jmbg)
+    [EndpointSummary("Get one customers")]
+    [EndpointDescription("This endpoint returns one customer based on provided jmbg")]
+    public async Task<ActionResult<GetCustomerDTO>> GetCustomer([FromRoute] int jmbg)
     {
-        var customer =await customerService.GetCustomer(jmbg);
+        var customer = await customerService.GetCustomer(jmbg);
         if (customer == null) return NotFound();
         return Ok(customer);
     }
 
     [HttpDelete("{jmbg}")]
+    [EndpointSummary("Removing customer")]
+    [EndpointDescription("This endpoint deletes one customer based on provided jmbg")]
     public async Task<ActionResult> DeleteCustomer([FromRoute] int jmbg)
     {
         var isDeleted = await customerService.DeleteCustomer(jmbg);
@@ -40,6 +46,8 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
+    [EndpointSummary("Creating customer")]
+    [EndpointDescription("This endpoint creates new customer based on information that has been provided in body of request")]
     public async Task<ActionResult<CreateCustomerDTO>> CreateCustomer([FromBody] CreateCustomerDTO customerToCreate)
     {
         var createdCustomer = await customerService.CreateCustomer(customerToCreate);
@@ -48,6 +56,8 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPut("{jmbg}")]
+    [EndpointSummary("Updating customer")]
+    [EndpointDescription("This endpoint updates customer based on information that has been provided in body of request")]
     public async Task<ActionResult<UpdateCustomerDTO>> UpdateCustomer([FromRoute]int jmbg,[FromBody] UpdateCustomerDTO updatedCustomerDTO)
     {
         var customer = await customerService.UpdateCustomer(updatedCustomerDTO, jmbg);
