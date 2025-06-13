@@ -5,7 +5,7 @@ namespace LibraryApp.DTOs.RequestDTO.Book;
 public class BookUpdateDTO
 {
 
-    [Length(0,25, ErrorMessage ="Naziv knjige mora imati izmedju 0 i 30 karaktera")]
+    [Length(0,25, ErrorMessage ="Length of book's title must be between 1 and 25 characters")]
     public string Title { get; set; }
     [AllowedValues("Adventure","Historical","Sci-fi","Action","Crime","Romance")]
     public string Genre { get; set; }
