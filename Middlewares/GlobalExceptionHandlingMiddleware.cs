@@ -28,8 +28,9 @@ public class GlobalExceptionHandlingMiddleware
             {
                 Title = ConstantsClass.ExceptionErrors.InvalidArgumentException.Title,
                 Type = ConstantsClass.ExceptionErrors.InvalidArgumentException.Type,
-                Detail = ConstantsClass.ExceptionErrors.InvalidArgumentException.Details,
-                Status=ConstantsClass.ExceptionErrors.InvalidArgumentException.Status
+                Detail = ConstantsClass.ExceptionErrors.InvalidArgumentException.Details+exception.Message,
+                Status = ConstantsClass.ExceptionErrors.InvalidArgumentException.Status
+
             };
 
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -46,7 +47,7 @@ public class GlobalExceptionHandlingMiddleware
             {
                 Title = ConstantsClass.ExceptionErrors.NotFoundException.Title,
                 Type = ConstantsClass.ExceptionErrors.NotFoundException.Type,
-                Detail = ConstantsClass.ExceptionErrors.NotFoundException.Details,
+                Detail = ConstantsClass.ExceptionErrors.NotFoundException.Details+exception.Message,
                 Status=ConstantsClass.ExceptionErrors.NotFoundException.Status                
             };
 

@@ -1,4 +1,6 @@
 using LibraryApp.CustomExceptions;
+using LibraryApp.CustomExceptions.AuthorExceptions;
+using LibraryApp.CustomExceptions.BookException;
 using LibraryApp.DTOs;
 using LibraryApp.DTOs.RequestDTO.Book;
 using LibraryApp.Mappers;
@@ -24,22 +26,22 @@ public class BookService : IBookService
     public async Task<GetBookDTO> GetBook(string isbn)
     {
         bool isbnValid = true;
-        char[] specChar = ['*', '\'', '\\', '+', '-', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '-', '=', '|', '[', ']'];
+        char[] specChar = ['*', '\'', '\\', '+', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '=', '|', '[', ']'];
         for (int i = 0; i < specChar.Length; i++)
         {
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
-        if (isbnValid == false) throw new InvalidArgumentException("ISBN is not valid");
+        if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
         var book = await context.Books.Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
-        if (book == null) throw new NotFoundException("Book can't be found");
+        if (book == null) throw new BookNotFoundException(isbn);
         return book;
     }
 
     public async Task<GetBookDTO> CreateBook(BookCreateDTO bookCreateDTO, int authorId)
     {
-        if (authorId < 0) throw new InvalidArgumentException("Author's id not valid");
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.FindAsync(authorId);
-        if (author == null) throw new NotFoundException("Author can't be found");
+        if (author == null) throw new AuthorNotFoundException(authorId);
         var book = bookCreateDTO.MapDtoToDomainEntity(author);
 
         context.Books.Add(book);
@@ -51,14 +53,14 @@ public class BookService : IBookService
     public async Task<bool> DeleteBook(string isbn)
     {
         bool isbnValid = true;
-        char[] specChar = ['*', '\'', '\\', '+', '-', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '-', '=', '|', '[', ']'];
+        char[] specChar = ['*', '\'', '\\', '+', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '=', '|', '[', ']'];
         for (int i = 0; i < specChar.Length; i++)
         {
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
-        if (isbnValid == false) throw new InvalidArgumentException("ISBN is not valid");
+        if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
         var book = await context.Books.FindAsync(isbn);
-        if (book == null) throw new NotFoundException("Book can't be found");
+        if (book == null)  throw new BookNotFoundException(isbn);
         context.Books.Remove(book);
         await context.SaveChangesAsync();
         return true; 
@@ -68,18 +70,18 @@ public class BookService : IBookService
     public  async Task<GetBookDTO> UpdateBook(string isbn, BookUpdateDTO updatedBook)
     {
         bool isbnValid = true;
-        char[] specChar = ['*', '\'', '\\', '+', '-', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '-', '=', '|', '[', ']'];
+        char[] specChar = ['*', '\'', '\\', '+', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '=', '|', '[', ']'];
         for (int i = 0; i < specChar.Length; i++)
         {
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
-        if (isbnValid == false) throw new InvalidArgumentException("ISBN is not valid");
+        if (isbnValid == false)  throw new BookInvalidArgumentException(isbn);
        
         var book =  context.Books
                     .OfType<Book>()
                     .Include(a => a.Author)
                     .FirstOrDefault(b => b.Isbn == isbn);
-        if (book == null) throw new NotFoundException("Book can't be found");
+        if (book == null)  throw new BookNotFoundException(isbn);
 
         book.Title = updatedBook.Title;
         book.Genre = updatedBook.Genre;

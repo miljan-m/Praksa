@@ -1,5 +1,5 @@
 using LibraryApp.CustomExceptions;
-using LibraryApp.DTOs;
+using LibraryApp.CustomExceptions.AuthorExceptions;
 using LibraryApp.DTOs.RequestDTO.Author;
 using LibraryApp.DTOs.ResponseDTO.Author;
 using LibraryApp.Mappers;
@@ -24,17 +24,17 @@ public class AuthorService : IAuthorService
 
     public async Task<Author> GetAuthor(int authorId)
     {
-        if (authorId < 0) throw new ArgumentException("Id not valid");
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.Where(a=>a.AuthorId==authorId).FirstOrDefaultAsync();
-        if (author == null) throw new NotFoundException("Author can't be found");
+        if (author == null) throw new AuthorNotFoundException(authorId);
         return author;
     }
 
     public async Task<bool> DeleteAuthor(int authorId)
     {
-        if (authorId < 0) throw new ArgumentException("Id not valid");
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.FindAsync(authorId);
-        if (author == null) throw new NotFoundException("Author can't be found");
+        if (author == null) throw new AuthorNotFoundException(authorId);
         context.Authors.Remove(author);
         await context.SaveChangesAsync();
         return true;
@@ -50,9 +50,9 @@ public class AuthorService : IAuthorService
 
     public async Task<GetAuthorDTO> UpdateAuthor(int authorId, AuthorUpdateDTO updatedAuthor)
     {
-        if (authorId < 0) throw new ArgumentException("Id not valid");
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.FindAsync(authorId);
-        if (author == null) throw new NotFoundException("Author can't be found");
+        if (author == null) throw new AuthorNotFoundException(authorId);
         author.Name = updatedAuthor.Name;
         author.LastName = updatedAuthor.LastName;
         author.DateOfBirth = updatedAuthor.DateOfBirth;
