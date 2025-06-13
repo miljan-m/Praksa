@@ -40,6 +40,7 @@ public class RequestResponseLoggingMiddleware
         try
         {
             await next(context);
+            
             context.Response.Body.Seek(0, SeekOrigin.Begin);
             using var responseBodyStream = new StreamReader(context.Response.Body);
             string responseBodyText = await responseBodyStream.ReadToEndAsync();
@@ -53,6 +54,7 @@ public class RequestResponseLoggingMiddleware
         {
             context.Response.Body = originalResponseBodyStream;
             await tempStream.CopyToAsync(context.Response.Body);
+            throw;
         }
        
 

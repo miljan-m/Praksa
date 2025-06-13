@@ -1,3 +1,4 @@
+using LibraryApp.CustomExceptions;
 using LibraryApp.DTOs;
 using LibraryApp.DTOs.RequestDTO.Customer;
 using LibraryApp.DTOs.ResponseDTO.Customer;
@@ -15,22 +16,26 @@ public class CustomerService : ICustomerService
         this.contex = context;
     }
 
-    
-
     public async Task<IEnumerable<GetCustomersDTO>> GetCustomers()
     {
-        return await contex.Customers.Select(c=>c.MapDomainEntitiesToDTO()).ToListAsync();
+        var customers = await contex.Customers.Select(c => c.MapDomainEntitiesToDTO()).ToListAsync();
+        if (customers == null) throw new NotFoundException("Database is empty");
+        return customers;
     }
 
     public async Task<GetCustomerDTO> GetCustomer(int jmbg)
     {
-        return await contex.Customers.Where(c=>c.JMBG==jmbg).Select(c=>c.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        if (jmbg < 0 || jmbg.ToString().Length > 13) throw new InvalidArgumentException("JMBG is not valid");
+        var customer = await contex.Customers.Where(c => c.JMBG == jmbg).Select(c => c.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        if (customer == null) throw new NotFoundException("Customer can't be found");
+        return customer;
     }
 
     public async Task<bool> DeleteCustomer(int jmbg)
-    {
+    {   
+        if (jmbg < 0 || jmbg.ToString().Length > 13) throw new InvalidArgumentException("JMBG is not valid");
         var customer = await contex.Customers.FindAsync(jmbg);
-        if (customer == null) return false;
+        if (customer == null) throw new NotFoundException("Customer can't be found");
         contex.Remove(customer);
         await contex.SaveChangesAsync();
         return true;
@@ -38,8 +43,9 @@ public class CustomerService : ICustomerService
 
     public async Task<UpdateCustomerDTO> UpdateCustomer(UpdateCustomerDTO updatedCustomer, int jmbg)
     {
+        if (jmbg < 0 || jmbg.ToString().Length > 13) throw new InvalidArgumentException("JMBG is not valid");
         var customer = await contex.Customers.FindAsync(jmbg);
-        if (customer == null) return null;
+        if (customer == null) throw new NotFoundException("Customer can't be found");
         customer.FirstName = updatedCustomer.FirstName;
         customer.LastName = updatedCustomer.LastName;
         await contex.SaveChangesAsync();

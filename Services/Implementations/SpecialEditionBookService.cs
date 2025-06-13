@@ -1,4 +1,4 @@
-using LibraryApp.DTOs;
+using LibraryApp.CustomExceptions;
 using LibraryApp.DTOs.RequestDTO.SpecialEditionBook;
 using LibraryApp.DTOs.ResponseDTO.SpecialEditionBook;
 using LibraryApp.Mappers;
@@ -17,26 +17,45 @@ public class SpecialEditionBookService : ISpecialEditionBookService
 
     public async Task<IEnumerable<GetSpecialBooksDTO>> GetBooks()
     {
-        return await context.Books.OfType<SpecialEditionBook>().Select(b=>b.MapDomainEntitiesToDto()).ToListAsync();
+        var books= await context.Books.OfType<SpecialEditionBook>().Select(b => b.MapDomainEntitiesToDto()).ToListAsync();
+        if (books == null) throw new NotFoundException("Database is empty");
+        return books;
     }
 
     public Task<GetSpecialBookDTO> GetBook(string isbn)
     {
-        return context.Books.OfType<SpecialEditionBook>().Where(b => b.Isbn == isbn).Select(b=>b.MapDomainEntityToDto()).FirstOrDefaultAsync();
+        bool isbnValid = true;
+        char[] specChar = ['*', '\'', '\\', '+', '-', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '-', '=', '|', '[', ']'];
+        for (int i = 0; i < specChar.Length; i++)
+        {
+            if (isbn.Contains(specChar[i])) isbnValid = false;
+        }
+        if (isbnValid == false) throw new InvalidArgumentException("ISBN is not valid");
+        var book = context.Books.OfType<SpecialEditionBook>().Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDto()).FirstOrDefaultAsync();
+        if (book == null) throw new NotFoundException("Book can't be found");
+        return book;
     }
 
     public async Task<bool> DeleteBook(string isbn)
-    {
+    {   
+        bool isbnValid = true;
+        char[] specChar = ['*', '\'', '\\', '+', '-', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '-', '=', '|', '[', ']'];
+        for (int i = 0; i < specChar.Length; i++)
+        {
+            if (isbn.Contains(specChar[i])) isbnValid = false;
+        }
+        if (isbnValid == false) throw new InvalidArgumentException("ISBN is not valid");
         var book = await context.Books.FindAsync(isbn);
-        if (book == null) return false;
+        if (book == null) throw new NotFoundException("Book can't be found");
         context.Books.Remove(book);
         await context.SaveChangesAsync();
         return true;
     }
     public async Task<GetSpecialBookDTO> CreateBook(CreateSpecialBookDTO bookCreateDTO, int authorId)
     {
+        if (authorId < 0) throw new InvalidArgumentException("Author's id not valid");
         var author = await context.Authors.FindAsync(authorId);
-        if (author == null) return null;
+        if (author == null) throw new NotFoundException("Author can't be found");
         var book = bookCreateDTO.MapDtoToDomainEntity(author);
         await context.Books.AddAsync(book);
         await context.SaveChangesAsync();
@@ -45,8 +64,16 @@ public class SpecialEditionBookService : ISpecialEditionBookService
 
     public async Task<GetSpecialBookDTO> UpdateBook(string isbn, UpdateSpecialBookDTO updatedBook)
     {
+        bool isbnValid = true;
+        char[] specChar = ['*', '\'', '\\', '+', '-', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '-', '=', '|', '[', ']'];
+        for (int i = 0; i < specChar.Length; i++)
+        {
+            if (isbn.Contains(specChar[i])) isbnValid = false;
+        }
+        if (isbnValid == false) throw new InvalidArgumentException("ISBN is not valid");
+       
         var specialBook = await context.Books.OfType<SpecialEditionBook>().Include(b => b.Author).Where(b => b.Isbn == isbn).FirstOrDefaultAsync();
-        if (specialBook == null) return null;
+        if (specialBook == null) throw new NotFoundException("Book can't be found");
 
         specialBook.Autograph = updatedBook.Autograph;
         specialBook.Available = updatedBook.Available;

@@ -47,9 +47,7 @@ public class GlobalExceptionHandlingMiddleware
                 Title = ConstantsClass.ExceptionErrors.NotFoundException.Title,
                 Type = ConstantsClass.ExceptionErrors.NotFoundException.Type,
                 Detail = ConstantsClass.ExceptionErrors.NotFoundException.Details,
-                Status=ConstantsClass.ExceptionErrors.NotFoundException.Status
-
-                
+                Status=ConstantsClass.ExceptionErrors.NotFoundException.Status                
             };
 
             context.Response.StatusCode = StatusCodes.Status404NotFound;
