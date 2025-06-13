@@ -1,4 +1,5 @@
-using LibraryApp.DTOs;
+using LibraryApp.Constants;
+using LibraryApp.CustomExceptions;
 using LibraryApp.DTOs.RequestDTO.Admin;
 using LibraryApp.DTOs.ResponseDTO.Admin;
 using LibraryApp.Mappers;
@@ -21,8 +22,10 @@ public class AdminService : IAdminService
     }
 
     public async Task<GetAdminDTO> GetAdmin(int adminId)
-    {
-        return await context.Admins.Where(a => a.AdminId == adminId).Select(a => a.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+    {   if (adminId < 0) throw new InvalidArgumentException("MESSAGE");
+        var admin = await context.Admins.Where(a => a.AdminId == adminId).Select(a => a.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        if (admin == null) throw new NotFoundException("MESSAGE");
+        return admin;
     }
 
     public async Task<bool> DeleteAdmin(int adminId)

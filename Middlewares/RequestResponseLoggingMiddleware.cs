@@ -34,19 +34,30 @@ public class RequestResponseLoggingMiddleware
         logger.LogInformation("Request Body: {requestBodyText}", requestBodyText);
 
         var originalResponseBodyStream = context.Response.Body;
-        using var tempStream = new MemoryStream();
+        var tempStream = new MemoryStream();
         context.Response.Body = tempStream;
 
-        await next(context);
+        try
+        {
+            await next(context);
+            context.Response.Body.Seek(0, SeekOrigin.Begin);
+            using var responseBodyStream = new StreamReader(context.Response.Body);
+            string responseBodyText = await responseBodyStream.ReadToEndAsync();
+            context.Response.Body.Seek(0, SeekOrigin.Begin);
+            responseBodyText = responseBodyText.Replace("},", "},\n");
+            logger.LogInformation("Response Body: {responseBodyText}", responseBodyText);
+            context.Response.Body = originalResponseBodyStream;
+            await tempStream.CopyToAsync(context.Response.Body);
+        }
+        catch (Exception exception)
+        {
+            context.Response.Body = originalResponseBodyStream;
+            await tempStream.CopyToAsync(context.Response.Body);
+        }
+       
 
-        context.Response.Body.Seek(0, SeekOrigin.Begin);
-        using var responseBodyStream = new StreamReader(context.Response.Body);
-        string responseBodyText = await responseBodyStream.ReadToEndAsync();
-        context.Response.Body.Seek(0, SeekOrigin.Begin);
-        responseBodyText = responseBodyText.Replace("},","},\n");
-        logger.LogInformation("Response Body: {responseBodyText}", responseBodyText);
-        context.Response.Body = originalResponseBodyStream;
-        await tempStream.CopyToAsync(context.Response.Body);
+        
+        
     }
 
 }
