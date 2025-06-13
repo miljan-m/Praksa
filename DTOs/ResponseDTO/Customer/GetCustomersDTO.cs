@@ -3,6 +3,5 @@ namespace LibraryApp.DTOs.ResponseDTO.Customer;
 public class GetCustomersDTO
 {
     public string FirstName { get; set; }
-    public string LastName { get; set; }
-   
+    public string LastName { get; set; }   
 }

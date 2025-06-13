@@ -1,9 +1,8 @@
 using LibraryApp.Mappers;
-using LibraryApp.DTOs;
 using LibraryApp.Services;
-using System.Threading.Tasks;
 using LibraryApp.DTOs.ResponseDTO.Admin;
 using LibraryApp.DTOs.RequestDTO.Admin;
+using System.ComponentModel;
 
 namespace LibraryApp.Controllers;
 
@@ -19,7 +18,13 @@ public class AdminController : ControllerBase
         this.adminService = adminService;
     }
 
+    /// <summary>
+    /// Get a list of all existing admins
+    /// </summary>
     [HttpGet]
+
+    [EndpointSummary("Get all existing admins")]
+    [EndpointDescription("This endpoint return list of all admins. Id of admins are hidden from client")]
     public async Task<ActionResult<IEnumerable<GetAdminsDTO>>> GetAdmins()
     {
         var adminsDto = await adminService.GetAdmins();
@@ -27,6 +32,8 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("{adminId}")]
+    [EndpointSummary("Get one admin")]
+    [EndpointDescription("This endpoint return one admin based on provided Id")]
     public async Task<ActionResult<GetAdminDTO>> GetAdmin([FromRoute] int adminId)
     {
         var adminDto = await adminService.GetAdmin(adminId);
@@ -34,15 +41,19 @@ public class AdminController : ControllerBase
     }
 
     [HttpDelete("{adminId}")]
-    public async Task<ActionResult> DeleteAdmin([FromRoute]int adminId)
+    [EndpointSummary("Removing admin")]
+    [EndpointDescription("This endpoint removes admin with Id that was provided")]
+    public async Task<ActionResult> DeleteAdmin([FromRoute] int adminId)
     {
-        var isDeleted =await adminService.DeleteAdmin(adminId);
+        var isDeleted = await adminService.DeleteAdmin(adminId);
         if (isDeleted) return Ok();
         return NotFound();
 
     }
 
     [HttpPost]
+    [EndpointSummary("Creation of new admin")]
+    [EndpointDescription("This endpoint creates new admin based on information that has been provided in body of request")]
     public async Task<ActionResult<GetAdminDTO>> CreateAdmin([FromBody] CreateAdminDTO createAdminDto)
     {
         var admin = await adminService.CreateAdmin(createAdminDto);
@@ -50,6 +61,8 @@ public class AdminController : ControllerBase
     }
 
     [HttpPut("{adminId}")]
+    [EndpointSummary("Updating admin")]
+    [EndpointDescription("This endpoint updates admin based on information that has been provided in body of request")]
     public async Task<ActionResult<GetAdminDTO>> UpdateAdmin([FromRoute] int adminId, [FromBody] UpdateAdminDTO updatedAdmin)
     {
         var admin = await adminService.UpdateAdmin(adminId, updatedAdmin);
