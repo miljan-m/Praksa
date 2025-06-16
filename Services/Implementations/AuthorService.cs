@@ -1,4 +1,5 @@
-using LibraryApp.DTOs;
+using LibraryApp.CustomExceptions;
+using LibraryApp.CustomExceptions.AuthorExceptions;
 using LibraryApp.DTOs.RequestDTO.Author;
 using LibraryApp.DTOs.ResponseDTO.Author;
 using LibraryApp.Mappers;
@@ -13,23 +14,27 @@ public class AuthorService : IAuthorService
     {
         this.context = context;
     }
-   
+
     public async Task<IEnumerable<GetAuthorsDTO>> GetAuthors()
     {
-        return await context.Authors.Select(a => a.MapDomainEntitiesToDto()).ToListAsync();
+        var authors = await context.Authors.Select(a => a.MapDomainEntitiesToDto()).ToListAsync();
+        if (authors == null) throw new NotFoundException("Database is empty");
+        return authors;
     }
 
     public async Task<Author> GetAuthor(int authorId)
     {
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.Where(a=>a.AuthorId==authorId).FirstOrDefaultAsync();
-        if (author == null) return null;
+        if (author == null) throw new AuthorNotFoundException(authorId);
         return author;
     }
 
     public async Task<bool> DeleteAuthor(int authorId)
     {
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.FindAsync(authorId);
-        if (author == null) return false;
+        if (author == null) throw new AuthorNotFoundException(authorId);
         context.Authors.Remove(author);
         await context.SaveChangesAsync();
         return true;
@@ -45,8 +50,9 @@ public class AuthorService : IAuthorService
 
     public async Task<GetAuthorDTO> UpdateAuthor(int authorId, AuthorUpdateDTO updatedAuthor)
     {
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.FindAsync(authorId);
-        if (author == null) return null;
+        if (author == null) throw new AuthorNotFoundException(authorId);
         author.Name = updatedAuthor.Name;
         author.LastName = updatedAuthor.LastName;
         author.DateOfBirth = updatedAuthor.DateOfBirth;

@@ -1,3 +1,6 @@
+using LibraryApp.CustomExceptions;
+using LibraryApp.CustomExceptions.AuthorExceptions;
+using LibraryApp.CustomExceptions.BookException;
 using LibraryApp.DTOs;
 using LibraryApp.DTOs.RequestDTO.Book;
 using LibraryApp.Mappers;
@@ -15,18 +18,30 @@ public class BookService : IBookService
 
     public async Task<IEnumerable<GetBooksDTO>> GetBooks()
     {
-        return await context.Books.OfType<Book>().Include(a=>a.Author).Select(b=>b.MapDomainEntitiesToDTO()).ToListAsync();
+        var books = await context.Books.OfType<Book>().Include(a => a.Author).Select(b => b.MapDomainEntitiesToDTO()).ToListAsync();
+        if (books == null) throw new NotFoundException("Database is empty");
+        return books;
     }
 
     public async Task<GetBookDTO> GetBook(string isbn)
     {
-        return await context.Books.Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        bool isbnValid = true;
+        char[] specChar = ['*', '\'', '\\', '+', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '=', '|', '[', ']'];
+        for (int i = 0; i < specChar.Length; i++)
+        {
+            if (isbn.Contains(specChar[i])) isbnValid = false;
+        }
+        if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
+        var book = await context.Books.Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        if (book == null) throw new BookNotFoundException(isbn);
+        return book;
     }
 
     public async Task<GetBookDTO> CreateBook(BookCreateDTO bookCreateDTO, int authorId)
     {
+        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await context.Authors.FindAsync(authorId);
-        if (author == null) return null;
+        if (author == null) throw new AuthorNotFoundException(authorId);
         var book = bookCreateDTO.MapDtoToDomainEntity(author);
 
         context.Books.Add(book);
@@ -37,8 +52,15 @@ public class BookService : IBookService
 
     public async Task<bool> DeleteBook(string isbn)
     {
+        bool isbnValid = true;
+        char[] specChar = ['*', '\'', '\\', '+', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '=', '|', '[', ']'];
+        for (int i = 0; i < specChar.Length; i++)
+        {
+            if (isbn.Contains(specChar[i])) isbnValid = false;
+        }
+        if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
         var book = await context.Books.FindAsync(isbn);
-        if (book == null) return false;
+        if (book == null)  throw new BookNotFoundException(isbn);
         context.Books.Remove(book);
         await context.SaveChangesAsync();
         return true; 
@@ -47,11 +69,19 @@ public class BookService : IBookService
 
     public  async Task<GetBookDTO> UpdateBook(string isbn, BookUpdateDTO updatedBook)
     {
+        bool isbnValid = true;
+        char[] specChar = ['*', '\'', '\\', '+', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '=', '|', '[', ']'];
+        for (int i = 0; i < specChar.Length; i++)
+        {
+            if (isbn.Contains(specChar[i])) isbnValid = false;
+        }
+        if (isbnValid == false)  throw new BookInvalidArgumentException(isbn);
+       
         var book =  context.Books
                     .OfType<Book>()
                     .Include(a => a.Author)
                     .FirstOrDefault(b => b.Isbn == isbn);
-        if (book == null) return null;
+        if (book == null)  throw new BookNotFoundException(isbn);
 
         book.Title = updatedBook.Title;
         book.Genre = updatedBook.Genre;

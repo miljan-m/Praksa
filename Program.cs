@@ -1,3 +1,4 @@
+using LibraryApp.Middlewares;
 using LibraryApp.MiddlewaresExtensionMethods;
 using LibraryApp.Services;
 using LibraryApp.Services.Implementations;
@@ -37,6 +38,7 @@ builder.Services.AddDbContext<LibraryDBContext>(options =>
 });
 
 var app = builder.Build();
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -49,7 +51,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.UseRequestResponseLogging();
