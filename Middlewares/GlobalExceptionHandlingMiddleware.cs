@@ -1,6 +1,4 @@
-using System.Text.Json;
 using LibraryApp.CustomExceptions;
-using LibraryApp.Constants;
 namespace LibraryApp.Middlewares;
 
 public class GlobalExceptionHandlingMiddleware
@@ -26,14 +24,14 @@ public class GlobalExceptionHandlingMiddleware
             logger.LogError(exception, "Exception: {message}", exception.Message);
             var problemDetail = new ProblemDetails
             {
-                Title = ConstantsClass.ExceptionErrors.InvalidArgumentException.Title,
-                Type = ConstantsClass.ExceptionErrors.InvalidArgumentException.Type,
-                Detail = ConstantsClass.ExceptionErrors.InvalidArgumentException.Details+exception.Message,
-                Status = ConstantsClass.ExceptionErrors.InvalidArgumentException.Status
+                Title = ExceptionConstants.ExceptionConstants.ExceptionErrors.InvalidArgumentException.Title,
+                Type = ExceptionConstants.ExceptionConstants.ExceptionErrors.InvalidArgumentException.Type,
+                Detail = ExceptionConstants.ExceptionConstants.ExceptionErrors.InvalidArgumentException.Details+exception.Message,
+                Status = ExceptionConstants.ExceptionConstants.ExceptionErrors.InvalidArgumentException.Status
 
             };
 
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            context.Response.StatusCode = ExceptionConstants.ExceptionConstants.ExceptionErrors.InvalidArgumentException.Status;
 
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsJsonAsync(problemDetail);
@@ -41,17 +39,18 @@ public class GlobalExceptionHandlingMiddleware
         }
         catch (NotFoundException exception)
         {
-            logger.LogError(exception, "Neki exception: {message}", exception.Message);
+            logger.LogError(exception, "Exception: {message}", exception.Message);
 
             var problemDetail = new ProblemDetails
             {
-                Title = ConstantsClass.ExceptionErrors.NotFoundException.Title,
-                Type = ConstantsClass.ExceptionErrors.NotFoundException.Type,
-                Detail = ConstantsClass.ExceptionErrors.NotFoundException.Details+exception.Message,
-                Status=ConstantsClass.ExceptionErrors.NotFoundException.Status                
+                Title = ExceptionConstants.ExceptionConstants.ExceptionErrors.NotFoundException.Title,
+                Type = ExceptionConstants.ExceptionConstants.ExceptionErrors.NotFoundException.Type,
+                Detail = ExceptionConstants.ExceptionConstants.ExceptionErrors.NotFoundException.Details+exception.Message,
+                Status=ExceptionConstants.ExceptionConstants.ExceptionErrors.NotFoundException.Status                
             };
 
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
+
+            context.Response.StatusCode = ExceptionConstants.ExceptionConstants.ExceptionErrors.NotFoundException.Status;
 
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsJsonAsync(problemDetail);
@@ -63,11 +62,13 @@ public class GlobalExceptionHandlingMiddleware
 
             var problemDetail = new ProblemDetails
             {
-                Title = "Theres some kind of problem",
-                Status = StatusCodes.Status500InternalServerError
+                Title = ExceptionConstants.ExceptionConstants.ExceptionErrors.UndefinedError.Title,
+                Type = ExceptionConstants.ExceptionConstants.ExceptionErrors.UndefinedError.Type,
+                Detail = ExceptionConstants.ExceptionConstants.ExceptionErrors.UndefinedError.Details+exception.Message,
+                Status=ExceptionConstants.ExceptionConstants.ExceptionErrors.UndefinedError.Status  
             };
 
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.StatusCode = ExceptionConstants.ExceptionConstants.ExceptionErrors.UndefinedError.Status;
 
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsJsonAsync(problemDetail);
