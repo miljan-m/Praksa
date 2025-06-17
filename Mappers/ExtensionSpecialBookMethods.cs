@@ -10,6 +10,7 @@ public static class ExtensionSpecialBookMethods
     {
         return new SpecialEditionBook
         {
+            Isbn=bookDto.Isbn,
             Title = bookDto.Title,
             Genre = bookDto.Genre,
             Available = bookDto.Available,

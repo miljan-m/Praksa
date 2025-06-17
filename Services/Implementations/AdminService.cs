@@ -1,5 +1,6 @@
 using LibraryApp.CustomExceptions;
 using LibraryApp.CustomExceptions.AdminException;
+using LibraryApp.Data.DbRepository;
 using LibraryApp.DTOs.RequestDTO.Admin;
 using LibraryApp.DTOs.ResponseDTO.Admin;
 using LibraryApp.Mappers;
@@ -9,52 +10,47 @@ namespace LibraryApp.Services.Implementations;
 
 public class AdminService : IAdminService
 {
-     private readonly LibraryDBContext context;
-    
-    public AdminService(LibraryDBContext context)
+    private readonly IGenericRepository<Admin> adminRepository;
+    public AdminService(IGenericRepository<Admin> adminRepository)
     {
-        this.context = context;
+        this.adminRepository = adminRepository;
     }
     
     public async Task<IEnumerable<GetAdminsDTO>> GetAdmins()
     {
-        var admins=await context.Admins.Select(a => a.MapDomainEntitiesToDTO()).ToListAsync();
+        var adminsList =await adminRepository.GetAllAsync();
+        var admins = adminsList.Select(a => a.MapDomainEntitiesToDTO()).ToList();
         if (admins == null) throw new NotFoundException("Database is empty");
         return admins;
     }
 
-    public async Task<GetAdminDTO> GetAdmin(int adminId)
-    {   if (adminId < 0) throw new AdminInvalidArgumentException(adminId);
-        var admin = await context.Admins.Where(a => a.AdminId == adminId).Select(a => a.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+    public async Task<GetAdminDTO> GetAdmin(string adminId)
+    {
+        //if (int.Parse(adminId) < 0) throw new AdminInvalidArgumentException(adminId);
+        var admin = await adminRepository.GetOneAsync(adminId);
         if (admin == null) throw new AdminNotFoundException(adminId);
-        return admin;
+        var adminDto = admin.MapDomainEntityToDTO();
+        return adminDto;
     }
 
-    public async Task<bool> DeleteAdmin(int adminId)
-    {   if (adminId < 0) throw new AdminInvalidArgumentException(adminId);
-        var admin = await context.Admins.FindAsync(adminId);
-        if (admin == null) throw new AdminNotFoundException(adminId);
-        context.Admins.Remove(admin);
-        await context.SaveChangesAsync();
-        return true;
+    public async Task<bool> DeleteAdmin(string adminId)
+    {
+        //if (int.Parse(adminId) < 0) throw new AdminInvalidArgumentException(adminId);
+        return await adminRepository.DeleteAsync(adminId); 
     }
 
-    public async Task<GetAdminDTO> UpdateAdmin(int adminId, UpdateAdminDTO adminDto)
-    {   if (adminId < 0) throw new AdminInvalidArgumentException(adminId);
-        var admin = await context.Admins.FindAsync(adminId);
+    public async Task<GetAdminDTO> UpdateAdmin(string adminId, UpdateAdminDTO adminDto)
+    {
+        //if (int.Parse(adminId) < 0) throw new AdminInvalidArgumentException(adminId);
+        var admin = await adminRepository.GetOneAsync(adminId);
         if (admin == null) throw new AdminNotFoundException(adminId);
-        admin.FirstName = adminDto.FirstName;
-        admin.LastName = adminDto.LastName;
-        admin.DateOfBirth = adminDto.DateOfBirth;
-        await context.SaveChangesAsync();
-        return admin.MapDomainEntityToDTO();
+        var updatedAdmin = await adminRepository.UpdateAsync(adminDto.MapDtoToDomainEntity(adminId), adminId);
+        return updatedAdmin.MapDomainEntityToDTO();
     }
 
     public async Task<Admin> CreateAdmin(CreateAdminDTO adminDto)
     {
         var admin = adminDto.MapDtoToDomainEntity();
-        await context.Admins.AddAsync(admin);
-        await context.SaveChangesAsync();
-        return admin;
+        return  await adminRepository.CreateAsync(admin);
     }
 }

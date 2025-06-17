@@ -1,3 +1,4 @@
+using LibraryApp.Data.DbRepository;
 using LibraryApp.Middlewares;
 using LibraryApp.MiddlewaresExtensionMethods;
 using LibraryApp.Services;
@@ -13,7 +14,7 @@ builder.Services.AddScoped<ISpecialEditionBookService, SpecialEditionBookService
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
-
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 
 builder.Services.AddControllers();

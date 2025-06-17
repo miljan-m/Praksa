@@ -10,12 +10,12 @@ namespace LibraryApp.Models;
 public class Book : IBook
 {
     [Key]
-    public string Isbn { get; set; }=Guid.NewGuid().ToString();
+    public string Isbn { get; set; }
     public string Title { get; set; }
 
     public string Genre { get; set; }
     public bool Available { get; set; }
-    public int? AuthorId { get; set; }
+    public string? AuthorId { get; set; }
     public Author? Author { get; set; }
 
     public Book()

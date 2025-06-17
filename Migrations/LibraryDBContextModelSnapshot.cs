@@ -24,11 +24,8 @@ namespace LibraryApp.Migrations
 
             modelBuilder.Entity("LibraryApp.Models.Admin", b =>
                 {
-                    b.Property<int>("AdminId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdminId"));
+                    b.Property<string>("AdminId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -46,31 +43,31 @@ namespace LibraryApp.Migrations
                     b.HasData(
                         new
                         {
-                            AdminId = 1,
+                            AdminId = "1",
                             FirstName = "Admin1Name",
                             LastName = "Admin1LastName"
                         },
                         new
                         {
-                            AdminId = 2,
+                            AdminId = "2",
                             FirstName = "Admin2Name",
                             LastName = "Admin2LastName"
                         },
                         new
                         {
-                            AdminId = 3,
+                            AdminId = "3",
                             FirstName = "Admin3Name",
                             LastName = "Admin3LastName"
                         },
                         new
                         {
-                            AdminId = 4,
+                            AdminId = "4",
                             FirstName = "Admin4Name",
                             LastName = "Admin4LastName"
                         },
                         new
                         {
-                            AdminId = 5,
+                            AdminId = "5",
                             FirstName = "Admin5Name",
                             LastName = "Admin5LastName"
                         });
@@ -78,11 +75,8 @@ namespace LibraryApp.Migrations
 
             modelBuilder.Entity("LibraryApp.Models.Author", b =>
                 {
-                    b.Property<int>("AuthorId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -100,25 +94,25 @@ namespace LibraryApp.Migrations
                     b.HasData(
                         new
                         {
-                            AuthorId = 1,
+                            AuthorId = "1",
                             LastName = "Author1LastName",
                             Name = "Author1Name"
                         },
                         new
                         {
-                            AuthorId = 2,
+                            AuthorId = "2",
                             LastName = "Author2LastName",
                             Name = "Author2Name"
                         },
                         new
                         {
-                            AuthorId = 3,
+                            AuthorId = "3",
                             LastName = "Author3LastName",
                             Name = "Author3Name"
                         },
                         new
                         {
-                            AuthorId = 4,
+                            AuthorId = "4",
                             LastName = "Author4LastName",
                             Name = "Author4Name"
                         });
@@ -129,8 +123,8 @@ namespace LibraryApp.Migrations
                     b.Property<string>("Isbn")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AuthorId")
-                        .HasColumnType("int");
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("Available")
                         .HasColumnType("bit");
@@ -203,11 +197,8 @@ namespace LibraryApp.Migrations
 
             modelBuilder.Entity("LibraryApp.Models.Customer", b =>
                 {
-                    b.Property<int>("JMBG")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JMBG"));
+                    b.Property<string>("JMBG")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -222,31 +213,31 @@ namespace LibraryApp.Migrations
                     b.HasData(
                         new
                         {
-                            JMBG = 123456,
+                            JMBG = "123456",
                             FirstName = "Customer1Name",
                             LastName = "Customer1LastName"
                         },
                         new
                         {
-                            JMBG = 239184762,
+                            JMBG = "239184762",
                             FirstName = "Customer2Name",
                             LastName = "Customer2LastName"
                         },
                         new
                         {
-                            JMBG = 329456,
+                            JMBG = "329456",
                             FirstName = "Customer3Name",
                             LastName = "Customer3LastName"
                         },
                         new
                         {
-                            JMBG = 324857,
+                            JMBG = "324857",
                             FirstName = "Customer4Name",
                             LastName = "Customer4LastName"
                         },
                         new
                         {
-                            JMBG = 238476,
+                            JMBG = "238476",
                             FirstName = "Customer5Name",
                             LastName = "Customer5LastName"
                         });

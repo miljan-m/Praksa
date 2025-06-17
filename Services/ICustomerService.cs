@@ -7,8 +7,8 @@ namespace LibraryApp.Services;
 public interface ICustomerService
 {
     public Task<IEnumerable<GetCustomersDTO>> GetCustomers();
-    public Task<GetCustomerDTO> GetCustomer(int jmbg);
-    public Task<bool> DeleteCustomer(int jmbg);
-    public Task<UpdateCustomerDTO> UpdateCustomer(UpdateCustomerDTO updatedCustomer,int jmbg);
+    public Task<GetCustomerDTO> GetCustomer(string jmbg);
+    public Task<bool> DeleteCustomer(string jmbg);
+    public Task<UpdateCustomerDTO> UpdateCustomer(UpdateCustomerDTO updatedCustomer,string jmbg);
     public Task<Customer> CreateCustomer(CreateCustomerDTO customer);
 }

@@ -1,64 +1,58 @@
 using LibraryApp.CustomExceptions;
 using LibraryApp.CustomExceptions.CustomerException;
-using LibraryApp.DTOs;
+using LibraryApp.Data.DbRepository;
 using LibraryApp.DTOs.RequestDTO.Customer;
 using LibraryApp.DTOs.ResponseDTO.Customer;
 using LibraryApp.Mappers;
-using Microsoft.VisualBasic;
+
 
 namespace LibraryApp.Services.Implementations;
 
 public class CustomerService : ICustomerService
 {
-    private readonly LibraryDBContext contex;
+    private readonly IGenericRepository<Customer> customerRepository;
 
-
-    public CustomerService(LibraryDBContext context)
+    public CustomerService(IGenericRepository<Customer> customerRepository)
     {
-        this.contex = context;
+        this.customerRepository = customerRepository;
     }
 
     public async Task<IEnumerable<GetCustomersDTO>> GetCustomers()
     {
-        var customers = await contex.Customers.Select(c => c.MapDomainEntitiesToDTO()).ToListAsync();
+        var customersList = await customerRepository.GetAllAsync();
+        var customers=customersList.Select(c => c.MapDomainEntitiesToDTO()).ToList();
         if (customers == null) throw new NotFoundException("Database is empty");
         return customers;
     }
 
-    public async Task<GetCustomerDTO> GetCustomer(int jmbg)
+    public async Task<GetCustomerDTO> GetCustomer(string jmbg)
     {   
-        if (jmbg < 0 ||  jmbg.ToString().Length > 13) throw new CustomerInvalidArgumentException(jmbg);
-        var customer = await contex.Customers.Where(c => c.JMBG == jmbg).Select(c => c.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        if (jmbg.Length < 0 ||  jmbg.Length > 13) throw new CustomerInvalidArgumentException(jmbg);
+        var customer = await customerRepository.GetOneAsync(jmbg);
         if (customer == null) throw new CustomerNotFoundException(jmbg);
-        return customer;
+        return customer.MapDomainEntityToDTO();
     }
 
-    public async Task<bool> DeleteCustomer(int jmbg)
+    public async Task<bool> DeleteCustomer(string jmbg)
     {   
-        if (jmbg < 0 || jmbg.ToString().Length > 13) throw new CustomerInvalidArgumentException(jmbg);
-        var customer = await contex.Customers.FindAsync(jmbg);
+        if (jmbg.Length < 0 || jmbg.ToString().Length > 13) throw new CustomerInvalidArgumentException(jmbg);
+        var customer = await customerRepository.GetOneAsync(jmbg);
         if (customer == null) throw new CustomerNotFoundException(jmbg);
-        contex.Remove(customer);
-        await contex.SaveChangesAsync();
-        return true;
+        return await customerRepository.DeleteAsync(jmbg);
     }
 
-    public async Task<UpdateCustomerDTO> UpdateCustomer(UpdateCustomerDTO updatedCustomer, int jmbg)
+    public async Task<UpdateCustomerDTO> UpdateCustomer(UpdateCustomerDTO updatedCustomer, string jmbg)
     {
-        if (jmbg < 0 || jmbg.ToString().Length > 13) throw new CustomerInvalidArgumentException(jmbg);
-        var customer = await contex.Customers.FindAsync(jmbg);
+        if (jmbg.Length < 0 || jmbg.ToString().Length > 13) throw new CustomerInvalidArgumentException(jmbg);
+        var customer = await customerRepository.GetOneAsync(jmbg);
         if (customer == null) throw new CustomerNotFoundException(jmbg);
-        customer.FirstName = updatedCustomer.FirstName;
-        customer.LastName = updatedCustomer.LastName;
-        await contex.SaveChangesAsync();
+        await customerRepository.UpdateAsync(updatedCustomer.MapDtoToDomainEntity(jmbg), jmbg);
         return updatedCustomer;   
     }
 
     public async Task<Customer> CreateCustomer(CreateCustomerDTO customer)
     {
         var nonDtoCustomer = customer.MapDtoToDomainEntity();
-        await contex.Customers.AddAsync(nonDtoCustomer);
-        await contex.SaveChangesAsync();
-        return nonDtoCustomer;
+        return await customerRepository.CreateAsync(nonDtoCustomer);
     }
 }

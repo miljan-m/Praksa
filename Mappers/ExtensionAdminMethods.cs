@@ -17,10 +17,11 @@ public static class AdminMethods
         };
     }
 
-     public static Admin MapDtoToDomainEntity(this UpdateAdminDTO adminDTO)
+     public static Admin MapDtoToDomainEntity(this UpdateAdminDTO adminDTO,string adminId)
     {
         return new Admin
         {
+            AdminId=adminId,
             FirstName = adminDTO.FirstName,
             LastName = adminDTO.LastName,
             DateOfBirth = adminDTO.DateOfBirth

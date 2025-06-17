@@ -18,22 +18,22 @@ public class LibraryDBContext : DbContext
     public DbSet<Rent> Rents{ get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var Author1 = new Author(1, "Author1Name", "Author1LastName");
-        var Author2 = new Author(2, "Author2Name", "Author2LastName");
-        var Author3 = new Author(3, "Author3Name", "Author3LastName");
-        var Author4 = new Author(4, "Author4Name", "Author4LastName");
+        var Author1 = new Author("1", "Author1Name", "Author1LastName");
+        var Author2 = new Author("2", "Author2Name", "Author2LastName");
+        var Author3 = new Author("3", "Author3Name", "Author3LastName");
+        var Author4 = new Author("4", "Author4Name", "Author4LastName");
 
-        var Admin1 = new Admin(1, "Admin1Name", "Admin1LastName");
-        var Admin2 = new Admin(2, "Admin2Name", "Admin2LastName");
-        var Admin3 = new Admin(3, "Admin3Name", "Admin3LastName");
-        var Admin4 = new Admin(4, "Admin4Name", "Admin4LastName");
-        var Admin5 = new Admin(5, "Admin5Name", "Admin5LastName");
+        var Admin1 = new Admin("1", "Admin1Name", "Admin1LastName");
+        var Admin2 = new Admin("2", "Admin2Name", "Admin2LastName");
+        var Admin3 = new Admin("3", "Admin3Name", "Admin3LastName");
+        var Admin4 = new Admin("4", "Admin4Name", "Admin4LastName");
+        var Admin5 = new Admin("5", "Admin5Name", "Admin5LastName");
 
-        var Customer1 = new Customer("Customer1Name", "Customer1LastName", 123456);
-        var Customer2 = new Customer("Customer2Name", "Customer2LastName", 239184762);
-        var Customer3 = new Customer("Customer3Name", "Customer3LastName", 329456);
-        var Customer4 = new Customer("Customer4Name", "Customer4LastName", 324857);
-        var Customer5 = new Customer("Customer5Name", "Customer5LastName", 238476);
+        var Customer1 = new Customer("Customer1Name", "Customer1LastName", "123456");
+        var Customer2 = new Customer("Customer2Name", "Customer2LastName", "239184762");
+        var Customer3 = new Customer("Customer3Name", "Customer3LastName", "329456");
+        var Customer4 = new Customer("Customer4Name", "Customer4LastName", "324857");
+        var Customer5 = new Customer("Customer5Name", "Customer5LastName", "238476");
 
         modelBuilder.Entity<Book>().HasDiscriminator<string>("Discriminator").HasValue<Book>("Book").HasValue<SpecialEditionBook>("Special");
         modelBuilder.Entity<Author>().HasData(Author1, Author2, Author3, Author4);

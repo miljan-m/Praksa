@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using LibraryApp.DTOs;
 using LibraryApp.Mappers;
 using LibraryApp.Services;
@@ -6,7 +7,8 @@ namespace LibraryApp.Models;
 
 public class Admin
 {
-    public int AdminId { get; set; }
+    [Key]
+    public string AdminId { get; set; } = Guid.NewGuid().ToString();
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
@@ -14,7 +16,7 @@ public class Admin
     {
 
     }
-    public Admin(int AdminId, string FirstName, string LastName)
+    public Admin(string AdminId, string FirstName, string LastName)
     {
         this.AdminId = AdminId;
         this.FirstName = FirstName;

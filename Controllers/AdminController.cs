@@ -34,7 +34,7 @@ public class AdminController : ControllerBase
     [HttpGet("{adminId}")]
     [EndpointSummary("Get one admin")]
     [EndpointDescription("This endpoint return one admin based on provided Id")]
-    public async Task<ActionResult<GetAdminDTO>> GetAdmin([FromRoute] int adminId)
+    public async Task<ActionResult<GetAdminDTO>> GetAdmin([FromRoute] string adminId)
     {
         var adminDto = await adminService.GetAdmin(adminId);
         return Ok(adminDto);
@@ -43,7 +43,7 @@ public class AdminController : ControllerBase
     [HttpDelete("{adminId}")]
     [EndpointSummary("Removing admin")]
     [EndpointDescription("This endpoint removes admin with Id that was provided")]
-    public async Task<ActionResult> DeleteAdmin([FromRoute] int adminId)
+    public async Task<ActionResult> DeleteAdmin([FromRoute] string adminId)
     {
         var isDeleted = await adminService.DeleteAdmin(adminId);
         if (isDeleted) return Ok();
@@ -63,7 +63,7 @@ public class AdminController : ControllerBase
     [HttpPut("{adminId}")]
     [EndpointSummary("Updating admin")]
     [EndpointDescription("This endpoint updates admin based on information that has been provided in body of request")]
-    public async Task<ActionResult<GetAdminDTO>> UpdateAdmin([FromRoute] int adminId, [FromBody] UpdateAdminDTO updatedAdmin)
+    public async Task<ActionResult<GetAdminDTO>> UpdateAdmin([FromRoute] string adminId, [FromBody] UpdateAdminDTO updatedAdmin)
     {
         var admin = await adminService.UpdateAdmin(adminId, updatedAdmin);
         if (admin == null) return NotFound();

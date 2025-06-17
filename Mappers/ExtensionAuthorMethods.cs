@@ -36,10 +36,11 @@ public static class ExtensionAuthorMethods
 
     }
 
-     public static Author MapDtoToDomainEntity(this AuthorUpdateDTO authorDto)
+     public static Author MapDtoToDomainEntity(this AuthorUpdateDTO authorDto,string authorId)
     {
         return new Author
         {
+            AuthorId=authorId,
             Name = authorDto.Name,
             LastName = authorDto.LastName,
             DateOfBirth = authorDto.DateOfBirth

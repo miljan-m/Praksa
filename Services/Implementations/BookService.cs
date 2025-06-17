@@ -1,6 +1,7 @@
 using LibraryApp.CustomExceptions;
 using LibraryApp.CustomExceptions.AuthorExceptions;
 using LibraryApp.CustomExceptions.BookException;
+using LibraryApp.Data.DbRepository;
 using LibraryApp.DTOs;
 using LibraryApp.DTOs.RequestDTO.Book;
 using LibraryApp.Mappers;
@@ -10,16 +11,20 @@ namespace LibraryApp.Services.Implementations;
 public class BookService : IBookService
 {
     private readonly LibraryDBContext context;
-
-    public BookService(LibraryDBContext context)
+    private readonly IGenericRepository<Book> bookRepository;
+    private readonly IGenericRepository<Author> authorRepository;
+    public BookService(LibraryDBContext context, IGenericRepository<Book> bookRepository, IGenericRepository<Author> authorRepository)
     {
         this.context = context;
+        this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     public async Task<IEnumerable<GetBooksDTO>> GetBooks()
     {
-        var books = await context.Books.OfType<Book>().Include(a => a.Author).Select(b => b.MapDomainEntitiesToDTO()).ToListAsync();
-        if (books == null) throw new NotFoundException("Database is empty");
+        var booksList = await bookRepository.GetAllAsync();
+        var books = booksList.Select(b => b.MapDomainEntitiesToDTO());
+        if (booksList == null) throw new NotFoundException("Database is empty");
         return books;
     }
 
@@ -32,20 +37,19 @@ public class BookService : IBookService
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
         if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
-        var book = await context.Books.Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDTO()).FirstOrDefaultAsync();
+        var book = await bookRepository.GetOneAsync(isbn);
         if (book == null) throw new BookNotFoundException(isbn);
-        return book;
+        return book.MapDomainEntityToDTO();
     }
 
-    public async Task<GetBookDTO> CreateBook(BookCreateDTO bookCreateDTO, int authorId)
+    public async Task<GetBookDTO> CreateBook(BookCreateDTO bookCreateDTO, string authorId)
     {
-        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
-        var author = await context.Authors.FindAsync(authorId);
+        //if (int.Parse(authorId) < 0) throw new AuthorInvalidArgumentException(authorId);
+        var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
         var book = bookCreateDTO.MapDtoToDomainEntity(author);
 
-        context.Books.Add(book);
-        await context.SaveChangesAsync();
+        await bookRepository.CreateAsync(book);
 
         return book.MapDomainEntityToDTO();
     }
@@ -59,10 +63,9 @@ public class BookService : IBookService
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
         if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
-        var book = await context.Books.FindAsync(isbn);
+        var book = await bookRepository.GetOneAsync(isbn);
         if (book == null)  throw new BookNotFoundException(isbn);
-        context.Books.Remove(book);
-        await context.SaveChangesAsync();
+        await bookRepository.DeleteAsync(isbn);
         return true; 
 
     }
@@ -76,17 +79,17 @@ public class BookService : IBookService
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
         if (isbnValid == false)  throw new BookInvalidArgumentException(isbn);
-       
+
         var book =  context.Books
                     .OfType<Book>()
                     .Include(a => a.Author)
                     .FirstOrDefault(b => b.Isbn == isbn);
-        if (book == null)  throw new BookNotFoundException(isbn);
 
-        book.Title = updatedBook.Title;
-        book.Genre = updatedBook.Genre;
-        book.Available = updatedBook.Available;
-        await context.SaveChangesAsync();
+        
+        if (book == null) throw new BookNotFoundException(isbn);
+        var updatedBookToEntity = updatedBook.MapDtoToDomainEntity(book.Author);
+        updatedBookToEntity.Isbn = isbn;
+        await bookRepository.UpdateAsync(updatedBookToEntity, isbn);
         return book.MapDomainEntityToDTO();
     }
 }

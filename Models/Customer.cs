@@ -10,13 +10,13 @@ public class Customer
     public string FirstName { get; set; }
     public string LastName { get; set; }
     [Key]
-    public int JMBG { get; set; }
+    public string JMBG { get; set; }
 
     public Customer()
     {
 
     }
-    public Customer(string FirstName, string LastName, int JMBG)
+    public Customer(string FirstName, string LastName, string JMBG)
     {
         this.FirstName = FirstName;
         this.LastName = LastName;
