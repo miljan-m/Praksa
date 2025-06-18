@@ -26,7 +26,6 @@ public class AdminService : IAdminService
 
     public async Task<GetAdminDTO> GetAdmin(string adminId)
     {
-        //if (int.Parse(adminId) < 0) throw new AdminInvalidArgumentException(adminId);
         var admin = await adminRepository.GetOneAsync(adminId);
         if (admin == null) throw new AdminNotFoundException(adminId);
         var adminDto = admin.MapDomainEntityToDTO();
@@ -35,13 +34,11 @@ public class AdminService : IAdminService
 
     public async Task<bool> DeleteAdmin(string adminId)
     {
-        //if (int.Parse(adminId) < 0) throw new AdminInvalidArgumentException(adminId);
         return await adminRepository.DeleteAsync(adminId); 
     }
 
     public async Task<GetAdminDTO> UpdateAdmin(string adminId, UpdateAdminDTO adminDto)
     {
-        //if (int.Parse(adminId) < 0) throw new AdminInvalidArgumentException(adminId);
         var admin = await adminRepository.GetOneAsync(adminId);
         if (admin == null) throw new AdminNotFoundException(adminId);
         var updatedAdmin = await adminRepository.UpdateAsync(adminDto.MapDtoToDomainEntity(adminId), adminId);

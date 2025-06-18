@@ -26,7 +26,6 @@ public class AuthorService : IAuthorService
 
     public async Task<Author> GetAuthor(string authorId)
     {
-        //if (int.Parse(authorId) < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
         return author;
@@ -34,7 +33,6 @@ public class AuthorService : IAuthorService
 
     public async Task<bool> DeleteAuthor(string authorId)
     {
-        //if (int.Parse(authorId) < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
         return await authorRepository.DeleteAsync(authorId);
@@ -43,13 +41,12 @@ public class AuthorService : IAuthorService
     public async Task<Author> CreateAuthor(AuthorCreateDTO authorDto)
     {
         var author = authorDto.MapDtoToDomainEntity();
-        await authorRepository.CreateAsync(authorDto.MapDtoToDomainEntity());
+        await authorRepository.CreateAsync(author);
         return author;
     }
 
     public async Task<GetAuthorDTO> UpdateAuthor(string authorId, AuthorUpdateDTO updatedAuthor)
     {
-        //if (int.Parse(authorId) < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
         await authorRepository.UpdateAsync(updatedAuthor.MapDtoToDomainEntity(authorId), authorId);

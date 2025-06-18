@@ -60,7 +60,6 @@ public class SpecialEditionBookService : ISpecialEditionBookService
     }
     public async Task<GetSpecialBookDTO> CreateBook(CreateSpecialBookDTO bookCreateDTO, string authorId)
     {
-        //if (int.Parse(authorId) < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
         var book = bookCreateDTO.MapDtoToDomainEntity(author);

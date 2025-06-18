@@ -44,7 +44,6 @@ public class BookService : IBookService
 
     public async Task<GetBookDTO> CreateBook(BookCreateDTO bookCreateDTO, string authorId)
     {
-        //if (int.Parse(authorId) < 0) throw new AuthorInvalidArgumentException(authorId);
         var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
         var book = bookCreateDTO.MapDtoToDomainEntity(author);

@@ -1,6 +1,4 @@
-using System.Data;
-using LibraryApp.Models;
-using Microsoft.EntityFrameworkCore;
+using LibraryApp.Models.BaseDomain;
 
 namespace LibraryApp.Data;
 
@@ -16,6 +14,35 @@ public class LibraryDBContext : DbContext
     public DbSet<Book> Books{ get; set; }
     public DbSet<Customer> Customers{ get; set; }
     public DbSet<Rent> Rents{ get; set; }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<IBaseEntity>();
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.DateCreated = DateTime.Now;
+            }
+
+            if (entry.State == EntityState.Modified)
+            {
+                entry.State = EntityState.Unchanged;
+                entry.Property(e => e.DateCreated).IsModified = false;
+                entry.Entity.DateModified = DateTime.Now;
+            }
+
+            if (entry.State == EntityState.Deleted)
+            {
+                entry.State = EntityState.Modified;
+                entry.Property(nameof(IBaseEntity.IsDeleted)).CurrentValue = true;
+                entry.Property(nameof(IBaseEntity.DateDeleted)).CurrentValue = DateTime.Now;
+                
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var Author1 = new Author("1", "Author1Name", "Author1LastName");
@@ -38,17 +65,21 @@ public class LibraryDBContext : DbContext
         modelBuilder.Entity<Book>().HasDiscriminator<string>("Discriminator").HasValue<Book>("Book").HasValue<SpecialEditionBook>("Special");
         modelBuilder.Entity<Author>().HasData(Author1, Author2, Author3, Author4);
         modelBuilder.Entity<Admin>().HasData(Admin1, Admin2, Admin3, Admin4, Admin5);
-       
+
         modelBuilder.Entity<Book>().HasData(
-        new Book { Title = "Alisa u zemlji cuda", Isbn = "123456oaihsf", Genre = "Avantura" ,Available=true},
-        new Book { Title = "Lord of rings", Isbn = "asdffrghsf", Genre = "Avantura",Available=true },
-        new Book { Title = "Harry Potter", Isbn = "127889asdihsf", Genre = "Avantura",Available=true },
-        new Book { Title = "Murder on Nil", Isbn = "deilgoihj2343", Genre = "Avantura" ,Available=true},
-        new Book { Title = "Le Petite Prince", Isbn = "123456oadadadasf", Genre = "Avantura",Available=true },
-        new Book {Title="The jungle book", Isbn="189er56oaihsf", Genre="Avantura",Available=true});
+        new Book { Title = "Alisa u zemlji cuda", Isbn = "123456oaihsf", Genre = "Avantura", Available = true },
+        new Book { Title = "Lord of rings", Isbn = "asdffrghsf", Genre = "Avantura", Available = true },
+        new Book { Title = "Harry Potter", Isbn = "127889asdihsf", Genre = "Avantura", Available = true },
+        new Book { Title = "Murder on Nil", Isbn = "deilgoihj2343", Genre = "Avantura", Available = true },
+        new Book { Title = "Le Petite Prince", Isbn = "123456oadadadasf", Genre = "Avantura", Available = true },
+        new Book { Title = "The jungle book", Isbn = "189er56oaihsf", Genre = "Avantura", Available = true });
 
         modelBuilder.Entity<Customer>().HasData(Customer1, Customer2, Customer3, Customer4, Customer5);
-        
+        modelBuilder.Entity<Admin>().HasQueryFilter(e => e.IsDeleted == null);
+        modelBuilder.Entity<Book>().HasQueryFilter(e => e.IsDeleted == null);
+        modelBuilder.Entity<Author>().HasQueryFilter(e => e.IsDeleted == null);
+
+
     }
 
 }

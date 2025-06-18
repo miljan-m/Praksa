@@ -43,7 +43,7 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult<GetAuthorDTO>> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
     {
         var author = await authorService.CreateAuthor(authorCreate);
-        return CreatedAtAction(nameof(GetAuthor),new {authorId=author.AuthorId } ,author.MapDomainEntityToDto());
+        return Ok(author);
     }
 
     [HttpDelete("{authorId}")]

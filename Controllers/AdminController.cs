@@ -57,7 +57,7 @@ public class AdminController : ControllerBase
     public async Task<ActionResult<GetAdminDTO>> CreateAdmin([FromBody] CreateAdminDTO createAdminDto)
     {
         var admin = await adminService.CreateAdmin(createAdminDto);
-        return CreatedAtAction(nameof(CreateAdmin), new { adminId = admin.AdminId }, admin.MapDomainEntityToDTO());
+        return Ok(admin);
     }
 
     [HttpPut("{adminId}")]
@@ -68,6 +68,5 @@ public class AdminController : ControllerBase
         var admin = await adminService.UpdateAdmin(adminId, updatedAdmin);
         if (admin == null) return NotFound();
         return Ok(admin);
-
     }
 }

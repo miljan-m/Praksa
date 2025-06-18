@@ -50,7 +50,6 @@ public class SpecialEditionBookController : ControllerBase
     public async Task<ActionResult<CreateSpecialBookDTO>> CreateSpecialBook([FromRoute] string authorId, CreateSpecialBookDTO specialEditionBook)
     {
         var book = await bookService.CreateBook(specialEditionBook, authorId);
-
         return Ok(book);
     }
 

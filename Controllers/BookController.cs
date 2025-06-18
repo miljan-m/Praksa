@@ -40,7 +40,7 @@ public class BookController : ControllerBase
     public async Task<ActionResult<GetBookDTO>> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] string authorId)
     {
         var toRetBook = await bookService.CreateBook(bookCreateDTO, authorId);
-        return CreatedAtAction(nameof(GetBook), new { isbn = toRetBook.Isbn }, toRetBook);
+        return Ok(toRetBook);
     }
 
     [HttpDelete("{isbn}")]
