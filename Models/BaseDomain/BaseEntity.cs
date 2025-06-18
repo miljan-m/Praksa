@@ -1,6 +1,6 @@
 namespace LibraryApp.Models.BaseDomain;
 
-public interface IBaseEntity
+public abstract class IBaseEntity
 {
     public DateTime DateCreated { get; set; }
     public DateTime? DateModified { get; set; }

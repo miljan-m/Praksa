@@ -37,7 +37,7 @@ builder.Services.AddDbContext<LibraryDBContext>(options =>
     string ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
     options.UseSqlServer(ConnectionString);
 });
-
+var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 

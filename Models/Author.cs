@@ -14,11 +14,6 @@ public class Author : IBaseEntity
     public DateTime? DateOfBirth { get; set; }
     public List<Book> Books { get; set; }
     
-    public DateTime DateCreated { get; set; }
-    public DateTime? DateModified { get ; set;}
-    public DateTime? DateDeleted {get ; set;}
-    public bool? IsDeleted { get ; set; }
-
     public Author()
     {
 

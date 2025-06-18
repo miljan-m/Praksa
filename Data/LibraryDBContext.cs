@@ -27,7 +27,7 @@ public class LibraryDBContext : DbContext
 
             if (entry.State == EntityState.Modified)
             {
-                entry.State = EntityState.Unchanged;
+                //entry.State = EntityState.Unchanged;
                 entry.Property(e => e.DateCreated).IsModified = false;
                 entry.Entity.DateModified = DateTime.Now;
             }
