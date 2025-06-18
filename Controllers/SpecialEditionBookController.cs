@@ -47,10 +47,9 @@ public class SpecialEditionBookController : ControllerBase
     [HttpPost("{authorId}")]
     [EndpointSummary("Creating special edition book")]
     [EndpointDescription("This endpoint creates new special edition books based on information that has been provided in body of request")]
-    public async Task<ActionResult<CreateSpecialBookDTO>> CreateSpecialBook([FromRoute] int authorId, CreateSpecialBookDTO specialEditionBook)
+    public async Task<ActionResult<CreateSpecialBookDTO>> CreateSpecialBook([FromRoute] string authorId, CreateSpecialBookDTO specialEditionBook)
     {
         var book = await bookService.CreateBook(specialEditionBook, authorId);
-
         return Ok(book);
     }
 

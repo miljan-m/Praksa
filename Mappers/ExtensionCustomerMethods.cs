@@ -25,18 +25,16 @@ public static class ExtensionCustomerMethods
     public static Customer MapDtoToDomainEntity(this CreateCustomerDTO customerDTO)
     {
         return new Customer
-        {
+        {   JMBG=customerDTO.JMBG,
             FirstName = customerDTO.FirstName,
             LastName = customerDTO.LastName,
         };
     }
-    
-      public static Customer MapDtoToDomainEntity(this UpdateCustomerDTO customerDTO)
+
+    public static Customer MapDtoToDomainEntity(this UpdateCustomerDTO customerDTO, Customer customer)
     {
-        return new Customer
-        {
-            FirstName = customerDTO.FirstName,
-            LastName = customerDTO.LastName,
-        };
+        customer.FirstName = customerDTO.FirstName;
+        customer.LastName = customerDTO.LastName;
+        return customer;
     }
 }

@@ -1,8 +1,9 @@
+using LibraryApp.Models.BaseDomain;
 using LibraryApp.Models.IDomain;
 
 namespace LibraryApp.Models;
 
-public class SpecialEditionBook : Book, IBook
+public class SpecialEditionBook : Book, IBook 
 {
     public int InStorage { get; set; }
     private string autograph;

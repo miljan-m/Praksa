@@ -30,7 +30,7 @@ public class AuthorController : ControllerBase
     [HttpGet("{authorId}")]
     [EndpointSummary("Gets one author")]
     [EndpointDescription("This endpoint returns one author based on provided id")]
-    public async Task<ActionResult<GetAuthorDTO>> GetAuthor([FromRoute] int authorId)
+    public async Task<ActionResult<GetAuthorDTO>> GetAuthor([FromRoute] string authorId)
     {
         var author = await authorService.GetAuthor(authorId);
         if (author == null) return NotFound();
@@ -43,13 +43,13 @@ public class AuthorController : ControllerBase
     public async Task<ActionResult<GetAuthorDTO>> CreateAuthor([FromBody] AuthorCreateDTO authorCreate)
     {
         var author = await authorService.CreateAuthor(authorCreate);
-        return CreatedAtAction(nameof(GetAuthor),new {authorId=author.AuthorId } ,author.MapDomainEntityToDto());
+        return Ok(author);
     }
 
     [HttpDelete("{authorId}")]
     [EndpointSummary("Removing author")]
     [EndpointDescription("This endpoint deletes author based on provided id")]
-    public async Task<ActionResult> DeleteAuthor([FromRoute] int authorId)
+    public async Task<ActionResult> DeleteAuthor([FromRoute] string authorId)
     {
         var isDeleted = await authorService.DeleteAuthor(authorId);
         if (isDeleted == false) return NotFound();
@@ -59,7 +59,7 @@ public class AuthorController : ControllerBase
     [HttpPut("{authorId}")]
     [EndpointSummary("Updating author")]
     [EndpointDescription("This endpoint updates author based on information that has been provided in body of request")]
-    public async Task<ActionResult<GetAuthorDTO>> UpdateAuthor([FromRoute] int authorId, [FromBody] AuthorUpdateDTO updatedAuthor)
+    public async Task<ActionResult<GetAuthorDTO>> UpdateAuthor([FromRoute] string authorId, [FromBody] AuthorUpdateDTO updatedAuthor)
     {
         var author = await authorService.UpdateAuthor(authorId, updatedAuthor);
         if (author == null) return NotFound();

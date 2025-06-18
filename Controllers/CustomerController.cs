@@ -28,7 +28,7 @@ public class CustomerController : ControllerBase
     [HttpGet("{jmbg}")]
     [EndpointSummary("Get one customers")]
     [EndpointDescription("This endpoint returns one customer based on provided jmbg")]
-    public async Task<ActionResult<GetCustomerDTO>> GetCustomer([FromRoute] int jmbg)
+    public async Task<ActionResult<GetCustomerDTO>> GetCustomer([FromRoute] string jmbg)
     {
         var customer = await customerService.GetCustomer(jmbg);
         if (customer == null) return NotFound();
@@ -38,7 +38,7 @@ public class CustomerController : ControllerBase
     [HttpDelete("{jmbg}")]
     [EndpointSummary("Removing customer")]
     [EndpointDescription("This endpoint deletes one customer based on provided jmbg")]
-    public async Task<ActionResult> DeleteCustomer([FromRoute] int jmbg)
+    public async Task<ActionResult> DeleteCustomer([FromRoute] string jmbg)
     {
         var isDeleted = await customerService.DeleteCustomer(jmbg);
         if (isDeleted) return NoContent();
@@ -58,7 +58,7 @@ public class CustomerController : ControllerBase
     [HttpPut("{jmbg}")]
     [EndpointSummary("Updating customer")]
     [EndpointDescription("This endpoint updates customer based on information that has been provided in body of request")]
-    public async Task<ActionResult<UpdateCustomerDTO>> UpdateCustomer([FromRoute]int jmbg,[FromBody] UpdateCustomerDTO updatedCustomerDTO)
+    public async Task<ActionResult<UpdateCustomerDTO>> UpdateCustomer([FromRoute]string jmbg,[FromBody] UpdateCustomerDTO updatedCustomerDTO)
     {
         var customer = await customerService.UpdateCustomer(updatedCustomerDTO, jmbg);
         return Ok(customer);

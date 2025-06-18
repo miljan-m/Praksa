@@ -7,8 +7,8 @@ namespace LibraryApp.Services;
 public interface IAdminService
 {
     public Task<IEnumerable<GetAdminsDTO>> GetAdmins();
-    public Task<GetAdminDTO> GetAdmin(int adminId);
-    public Task<bool> DeleteAdmin(int adminId);
-    public Task<GetAdminDTO> UpdateAdmin(int adminId, UpdateAdminDTO adminDto);
+    public Task<GetAdminDTO> GetAdmin(string adminId);
+    public Task<bool> DeleteAdmin(string adminId);
+    public Task<GetAdminDTO> UpdateAdmin(string adminId, UpdateAdminDTO adminDto);
     public Task<Admin> CreateAdmin(CreateAdminDTO adminDto);
 }

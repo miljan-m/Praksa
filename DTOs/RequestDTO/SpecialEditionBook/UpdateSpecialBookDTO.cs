@@ -8,7 +8,6 @@ public class UpdateSpecialBookDTO
     public string Title { get; set; }
     [AllowedValues("Adventure","Historical","Sci-fi","Action","Crime","Romance")]
     public string Genre { get; set; }
-    [AllowedValues("true,false")]
     public bool Available { get; set; }
     [Range(0,50, MinimumIsExclusive =true)]
     public int InStorage { get; set; }

@@ -1,12 +1,14 @@
-using LibraryApp.DTOs;
-using LibraryApp.Mappers;
-using LibraryApp.Services;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using LibraryApp.Models.BaseDomain;
 
 namespace LibraryApp.Models;
 
-public class Author 
+public class Author : IBaseEntity
 {
-    public int AuthorId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string AuthorId { get; set; }
     public string Name { get; set; }
     public string LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
@@ -17,7 +19,7 @@ public class Author
 
     }
 
-     public Author(int AuthorId, string Name, string LastName)
+     public Author(string AuthorId, string Name, string LastName)
     {
         this.AuthorId = AuthorId;
         this.Name = Name;

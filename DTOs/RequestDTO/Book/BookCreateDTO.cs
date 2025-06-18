@@ -12,7 +12,6 @@ public class BookCreateDTO
     
     [AllowedValues("Adventure","Historical","Sci-fi","Action","Crime","Romance")]
     public string Genre { get; set; }
-    [AllowedValues("true","false")]
     public bool Available { get; set; }
     
 }

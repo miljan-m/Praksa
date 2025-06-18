@@ -10,6 +10,7 @@ public static class ExtensionSpecialBookMethods
     {
         return new SpecialEditionBook
         {
+            Isbn=bookDto.Isbn,
             Title = bookDto.Title,
             Genre = bookDto.Genre,
             Available = bookDto.Available,
@@ -20,18 +21,15 @@ public static class ExtensionSpecialBookMethods
         };
     }
 
-    public static SpecialEditionBook MapDtoToDomainEntity(this UpdateSpecialBookDTO bookDto, Author author)
+    public static SpecialEditionBook MapDtoToDomainEntity(this UpdateSpecialBookDTO bookDto, SpecialEditionBook book)
     {
-        return new SpecialEditionBook
-        {
-            Title = bookDto.Title,
-            Genre = bookDto.Genre,
-            Available = bookDto.Available,
-            Author = author,
-            AuthorId = author.AuthorId,
-            Autograph = bookDto.Autograph,
-            InStorage = bookDto.InStorage
-        };
+        book.Title = bookDto.Title;
+        book.Genre = bookDto.Genre;
+        book.Available = bookDto.Available;
+        book.Autograph = bookDto.Autograph;
+        book.InStorage = bookDto.InStorage;
+
+        return book;
     }
 
     public static GetSpecialBookDTO MapDomainEntityToDto(this SpecialEditionBook book)

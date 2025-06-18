@@ -19,17 +19,13 @@ public static class ExtensionBookMethods
         };
     }
 
-    public static Book MapDtoToDomainEntity(this BookUpdateDTO bookDTO, Author author)
+    public static Book MapDtoToDomainEntity(this BookUpdateDTO bookDTO, Book book)
     {
-
-        return new Book
-        {
-            Title = bookDTO.Title,
-            Genre = bookDTO.Genre,
-            Available = bookDTO.Available,
-            AuthorId = author.AuthorId,
-            Author = author
-        };
+        book.Title = bookDTO.Title;
+        book.Genre = bookDTO.Genre;
+        book.Available = bookDTO.Available;
+        return book;
+        
     }
 
     public static GetBooksDTO MapDomainEntitiesToDTO(this Book book)

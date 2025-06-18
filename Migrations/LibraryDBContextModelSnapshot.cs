@@ -24,17 +24,27 @@ namespace LibraryApp.Migrations
 
             modelBuilder.Entity("LibraryApp.Models.Admin", b =>
                 {
-                    b.Property<int>("AdminId")
+                    b.Property<string>("AdminId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdminId"));
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -46,31 +56,36 @@ namespace LibraryApp.Migrations
                     b.HasData(
                         new
                         {
-                            AdminId = 1,
+                            AdminId = "1",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Admin1Name",
                             LastName = "Admin1LastName"
                         },
                         new
                         {
-                            AdminId = 2,
+                            AdminId = "2",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Admin2Name",
                             LastName = "Admin2LastName"
                         },
                         new
                         {
-                            AdminId = 3,
+                            AdminId = "3",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Admin3Name",
                             LastName = "Admin3LastName"
                         },
                         new
                         {
-                            AdminId = 4,
+                            AdminId = "4",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Admin4Name",
                             LastName = "Admin4LastName"
                         },
                         new
                         {
-                            AdminId = 5,
+                            AdminId = "5",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Admin5Name",
                             LastName = "Admin5LastName"
                         });
@@ -78,14 +93,24 @@ namespace LibraryApp.Migrations
 
             modelBuilder.Entity("LibraryApp.Models.Author", b =>
                 {
-                    b.Property<int>("AuthorId")
+                    b.Property<string>("AuthorId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -100,25 +125,29 @@ namespace LibraryApp.Migrations
                     b.HasData(
                         new
                         {
-                            AuthorId = 1,
+                            AuthorId = "1",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "Author1LastName",
                             Name = "Author1Name"
                         },
                         new
                         {
-                            AuthorId = 2,
+                            AuthorId = "2",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "Author2LastName",
                             Name = "Author2Name"
                         },
                         new
                         {
-                            AuthorId = 3,
+                            AuthorId = "3",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "Author3LastName",
                             Name = "Author3Name"
                         },
                         new
                         {
-                            AuthorId = 4,
+                            AuthorId = "4",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "Author4LastName",
                             Name = "Author4Name"
                         });
@@ -127,13 +156,23 @@ namespace LibraryApp.Migrations
             modelBuilder.Entity("LibraryApp.Models.Book", b =>
                 {
                     b.Property<string>("Isbn")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AuthorId")
-                        .HasColumnType("int");
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("Available")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -142,6 +181,9 @@ namespace LibraryApp.Migrations
 
                     b.Property<string>("Genre")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -161,6 +203,7 @@ namespace LibraryApp.Migrations
                         {
                             Isbn = "123456oaihsf",
                             Available = true,
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Avantura",
                             Title = "Alisa u zemlji cuda"
                         },
@@ -168,6 +211,7 @@ namespace LibraryApp.Migrations
                         {
                             Isbn = "asdffrghsf",
                             Available = true,
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Avantura",
                             Title = "Lord of rings"
                         },
@@ -175,6 +219,7 @@ namespace LibraryApp.Migrations
                         {
                             Isbn = "127889asdihsf",
                             Available = true,
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Avantura",
                             Title = "Harry Potter"
                         },
@@ -182,6 +227,7 @@ namespace LibraryApp.Migrations
                         {
                             Isbn = "deilgoihj2343",
                             Available = true,
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Avantura",
                             Title = "Murder on Nil"
                         },
@@ -189,6 +235,7 @@ namespace LibraryApp.Migrations
                         {
                             Isbn = "123456oadadadasf",
                             Available = true,
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Avantura",
                             Title = "Le Petite Prince"
                         },
@@ -196,6 +243,7 @@ namespace LibraryApp.Migrations
                         {
                             Isbn = "189er56oaihsf",
                             Available = true,
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Genre = "Avantura",
                             Title = "The jungle book"
                         });
@@ -203,14 +251,23 @@ namespace LibraryApp.Migrations
 
             modelBuilder.Entity("LibraryApp.Models.Customer", b =>
                 {
-                    b.Property<int>("JMBG")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("JMBG")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JMBG"));
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateDeleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -222,31 +279,36 @@ namespace LibraryApp.Migrations
                     b.HasData(
                         new
                         {
-                            JMBG = 123456,
+                            JMBG = "123456",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Customer1Name",
                             LastName = "Customer1LastName"
                         },
                         new
                         {
-                            JMBG = 239184762,
+                            JMBG = "239184762",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Customer2Name",
                             LastName = "Customer2LastName"
                         },
                         new
                         {
-                            JMBG = 329456,
+                            JMBG = "329456",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Customer3Name",
                             LastName = "Customer3LastName"
                         },
                         new
                         {
-                            JMBG = 324857,
+                            JMBG = "324857",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Customer4Name",
                             LastName = "Customer4LastName"
                         },
                         new
                         {
-                            JMBG = 238476,
+                            JMBG = "238476",
+                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             FirstName = "Customer5Name",
                             LastName = "Customer5LastName"
                         });

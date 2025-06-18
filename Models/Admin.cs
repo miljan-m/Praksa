@@ -1,20 +1,23 @@
-using LibraryApp.DTOs;
-using LibraryApp.Mappers;
-using LibraryApp.Services;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using LibraryApp.Models.BaseDomain;
 
 namespace LibraryApp.Models;
 
-public class Admin
+public class Admin : IBaseEntity
 {
-    public int AdminId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string AdminId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
+
     public Admin()
     {
 
     }
-    public Admin(int AdminId, string FirstName, string LastName)
+    public Admin(string AdminId, string FirstName, string LastName)
     {
         this.AdminId = AdminId;
         this.FirstName = FirstName;

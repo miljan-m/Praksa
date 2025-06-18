@@ -1,6 +1,7 @@
 using LibraryApp.CustomExceptions;
 using LibraryApp.CustomExceptions.AuthorExceptions;
 using LibraryApp.CustomExceptions.BookException;
+using LibraryApp.Data.DbRepository;
 using LibraryApp.DTOs.RequestDTO.SpecialEditionBook;
 using LibraryApp.DTOs.ResponseDTO.SpecialEditionBook;
 using LibraryApp.Mappers;
@@ -9,22 +10,27 @@ namespace LibraryApp.Services.Implementations;
 
 public class SpecialEditionBookService : ISpecialEditionBookService
 {
-     private readonly LibraryDBContext context;
+    private readonly LibraryDBContext context;
+    private readonly IGenericRepository<SpecialEditionBook> specEditionBookRepository;
+    private readonly IGenericRepository<Author> authorRepository;
 
-    public SpecialEditionBookService(LibraryDBContext context)
+    public SpecialEditionBookService(LibraryDBContext context, IGenericRepository<SpecialEditionBook> specEditionBookRepository, IGenericRepository<Author> authorRepository)
     {
         this.context = context;
+        this.specEditionBookRepository = specEditionBookRepository;
+        this.authorRepository = authorRepository;
     }
 
 
     public async Task<IEnumerable<GetSpecialBooksDTO>> GetBooks()
     {
-        var books= await context.Books.OfType<SpecialEditionBook>().Select(b => b.MapDomainEntitiesToDto()).ToListAsync();
-        if (books == null) throw new NotFoundException("Database is empty");
+        var booksList = await specEditionBookRepository.GetAllAsync();
+        var books = booksList.Select(b => b.MapDomainEntitiesToDto());
+        if (booksList == null) throw new NotFoundException("Database is empty");
         return books;
     }
 
-    public Task<GetSpecialBookDTO> GetBook(string isbn)
+    public async Task<GetSpecialBookDTO> GetBook(string isbn)
     {
         bool isbnValid = true;
         char[] specChar = ['*', '\'', '\\', '+', '*', '/', '.', ',', '!', '@', '#', '$', '%', '^', '&', '(', ')', '_', '=', '|', '[', ']'];
@@ -33,9 +39,9 @@ public class SpecialEditionBookService : ISpecialEditionBookService
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
         if (isbnValid == false) throw new SpecBookInvalidArgumentException(isbn);
-        var book = context.Books.OfType<SpecialEditionBook>().Where(b => b.Isbn == isbn).Select(b => b.MapDomainEntityToDto()).FirstOrDefaultAsync();
+        var book = await specEditionBookRepository.GetOneAsync(isbn);
         if (book == null) throw new SpecBookNotFoundException(isbn);
-        return book;
+        return book.MapDomainEntityToDto();
     }
 
     public async Task<bool> DeleteBook(string isbn)
@@ -47,20 +53,17 @@ public class SpecialEditionBookService : ISpecialEditionBookService
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
         if (isbnValid == false) throw new SpecBookInvalidArgumentException(isbn);
-        var book = await context.Books.FindAsync(isbn);
+        var book = await specEditionBookRepository.GetOneAsync(isbn);
         if (book == null) throw new SpecBookNotFoundException(isbn);
-        context.Books.Remove(book);
-        await context.SaveChangesAsync();
+        await specEditionBookRepository.DeleteAsync(isbn);
         return true;
     }
-    public async Task<GetSpecialBookDTO> CreateBook(CreateSpecialBookDTO bookCreateDTO, int authorId)
+    public async Task<GetSpecialBookDTO> CreateBook(CreateSpecialBookDTO bookCreateDTO, string authorId)
     {
-        if (authorId < 0) throw new AuthorInvalidArgumentException(authorId);
-        var author = await context.Authors.FindAsync(authorId);
+        var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
         var book = bookCreateDTO.MapDtoToDomainEntity(author);
-        await context.Books.AddAsync(book);
-        await context.SaveChangesAsync();
+        await specEditionBookRepository.CreateAsync(bookCreateDTO.MapDtoToDomainEntity(author));
         return book.MapDomainEntityToDto();
     }
 
@@ -77,13 +80,9 @@ public class SpecialEditionBookService : ISpecialEditionBookService
         var specialBook = await context.Books.OfType<SpecialEditionBook>().Include(b => b.Author).Where(b => b.Isbn == isbn).FirstOrDefaultAsync();
         if (specialBook == null) throw new SpecBookNotFoundException(isbn);
 
-        specialBook.Autograph = updatedBook.Autograph;
-        specialBook.Available = updatedBook.Available;
-        specialBook.Genre = updatedBook.Genre;
-        specialBook.InStorage = updatedBook.InStorage;
-        specialBook.Title = updatedBook.Title;
-
-        await context.SaveChangesAsync();
+        var book = updatedBook.MapDtoToDomainEntity(specialBook);
+        book.Isbn = isbn;
+        await specEditionBookRepository.UpdateAsync(book, isbn);
         return specialBook.MapDomainEntityToDto();
     }
 }

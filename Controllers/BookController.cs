@@ -37,10 +37,10 @@ public class BookController : ControllerBase
     [HttpPost("{authorId}")]
     [EndpointSummary("Creation of new book")]
     [EndpointDescription("This endpoint creates new book based on information that has been provided in body of request")]
-    public async Task<ActionResult<GetBookDTO>> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] int authorId)
+    public async Task<ActionResult<GetBookDTO>> CreateBook([FromBody] BookCreateDTO bookCreateDTO, [FromRoute] string authorId)
     {
         var toRetBook = await bookService.CreateBook(bookCreateDTO, authorId);
-        return CreatedAtAction(nameof(GetBook), new { isbn = toRetBook.Isbn }, toRetBook);
+        return Ok(toRetBook);
     }
 
     [HttpDelete("{isbn}")]
