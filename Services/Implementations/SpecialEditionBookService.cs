@@ -80,7 +80,7 @@ public class SpecialEditionBookService : ISpecialEditionBookService
         var specialBook = await context.Books.OfType<SpecialEditionBook>().Include(b => b.Author).Where(b => b.Isbn == isbn).FirstOrDefaultAsync();
         if (specialBook == null) throw new SpecBookNotFoundException(isbn);
 
-        var book = updatedBook.MapDtoToDomainEntity(specialBook.Author);
+        var book = updatedBook.MapDtoToDomainEntity(specialBook);
         book.Isbn = isbn;
         await specEditionBookRepository.UpdateAsync(book, isbn);
         return specialBook.MapDomainEntityToDto();

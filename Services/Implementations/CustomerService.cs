@@ -46,7 +46,7 @@ public class CustomerService : ICustomerService
         if (jmbg.Length < 0 || jmbg.ToString().Length > 13) throw new CustomerInvalidArgumentException(jmbg);
         var customer = await customerRepository.GetOneAsync(jmbg);
         if (customer == null) throw new CustomerNotFoundException(jmbg);
-        await customerRepository.UpdateAsync(updatedCustomer.MapDtoToDomainEntity(jmbg), jmbg);
+        await customerRepository.UpdateAsync(updatedCustomer.MapDtoToDomainEntity(customer), jmbg);
         return updatedCustomer;   
     }
 

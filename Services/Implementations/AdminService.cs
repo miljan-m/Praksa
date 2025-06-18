@@ -41,7 +41,7 @@ public class AdminService : IAdminService
     {
         var admin = await adminRepository.GetOneAsync(adminId);
         if (admin == null) throw new AdminNotFoundException(adminId);
-        var updatedAdmin = await adminRepository.UpdateAsync(adminDto.MapDtoToDomainEntity(adminId), adminId);
+        var updatedAdmin = await adminRepository.UpdateAsync(adminDto.MapDtoToDomainEntity(admin), adminId);
         return updatedAdmin.MapDomainEntityToDTO();
     }
 

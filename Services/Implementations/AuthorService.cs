@@ -49,7 +49,7 @@ public class AuthorService : IAuthorService
     {
         var author = await authorRepository.GetOneAsync(authorId);
         if (author == null) throw new AuthorNotFoundException(authorId);
-        await authorRepository.UpdateAsync(updatedAuthor.MapDtoToDomainEntity(authorId), authorId);
+        await authorRepository.UpdateAsync(updatedAuthor.MapDtoToDomainEntity(author), authorId);
         return author.MapDomainEntityToDto();
     }
 }

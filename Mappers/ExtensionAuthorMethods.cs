@@ -15,7 +15,7 @@ public static class ExtensionAuthorMethods
         };
     }
 
-     public static GetAuthorDTO MapDomainEntityToDto(this Author a)
+    public static GetAuthorDTO MapDomainEntityToDto(this Author a)
     {
         return new GetAuthorDTO
         {
@@ -36,16 +36,15 @@ public static class ExtensionAuthorMethods
 
     }
 
-     public static Author MapDtoToDomainEntity(this AuthorUpdateDTO authorDto,string authorId)
+    public static Author MapDtoToDomainEntity(this AuthorUpdateDTO authorDto, Author author)
     {
-        return new Author
-        {
-            AuthorId=authorId,
-            Name = authorDto.Name,
-            LastName = authorDto.LastName,
-            DateOfBirth = authorDto.DateOfBirth
-        };
+        author.Name = authorDto.Name;
+        author.LastName = authorDto.LastName;
+        author.DateOfBirth = authorDto.DateOfBirth;
+        return author;
 
     }
+    
+   
 
 }

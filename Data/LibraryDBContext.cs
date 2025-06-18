@@ -27,17 +27,14 @@ public class LibraryDBContext : DbContext
 
             if (entry.State == EntityState.Modified)
             {
-                //entry.State = EntityState.Unchanged;
-                entry.Property(e => e.DateCreated).IsModified = false;
                 entry.Entity.DateModified = DateTime.Now;
             }
 
             if (entry.State == EntityState.Deleted)
             {
                 entry.State = EntityState.Modified;
-                entry.Property(nameof(IBaseEntity.IsDeleted)).CurrentValue = true;
-                entry.Property(nameof(IBaseEntity.DateDeleted)).CurrentValue = DateTime.Now;
-                
+                entry.Entity.IsDeleted = true;
+                entry.Entity.DateDeleted = DateTime.Now;                
             }
         }
 

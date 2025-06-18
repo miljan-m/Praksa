@@ -86,7 +86,7 @@ public class BookService : IBookService
 
         
         if (book == null) throw new BookNotFoundException(isbn);
-        var updatedBookToEntity = updatedBook.MapDtoToDomainEntity(book.Author);
+        var updatedBookToEntity = updatedBook.MapDtoToDomainEntity(book);
         updatedBookToEntity.Isbn = isbn;
         await bookRepository.UpdateAsync(updatedBookToEntity, isbn);
         return book.MapDomainEntityToDTO();

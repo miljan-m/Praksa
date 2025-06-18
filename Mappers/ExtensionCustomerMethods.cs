@@ -30,14 +30,11 @@ public static class ExtensionCustomerMethods
             LastName = customerDTO.LastName,
         };
     }
-    
-      public static Customer MapDtoToDomainEntity(this UpdateCustomerDTO customerDTO,string jmbg)
+
+    public static Customer MapDtoToDomainEntity(this UpdateCustomerDTO customerDTO, Customer customer)
     {
-        return new Customer
-        {
-            JMBG=jmbg,
-            FirstName = customerDTO.FirstName,
-            LastName = customerDTO.LastName,
-        };
+        customer.FirstName = customerDTO.FirstName;
+        customer.LastName = customerDTO.LastName;
+        return customer;
     }
 }
