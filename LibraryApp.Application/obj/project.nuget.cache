@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "qmGw96O4FbU=",
+  "dgSpecHash": "LG+Yu1YtYUQ=",
   "success": true,
   "projectFilePath": "C:\\Users\\Miljan.Mitic\\Desktop\\Library1\\LibraryApp.Application\\LibraryApp.Application.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Miljan.Mitic\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.3.0\\microsoft.aspnetcore.http.abstractions.2.3.0.nupkg.sha512",
+    "C:\\Users\\Miljan.Mitic\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.3.0\\microsoft.aspnetcore.http.features.2.3.0.nupkg.sha512",
+    "C:\\Users\\Miljan.Mitic\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\Miljan.Mitic\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
