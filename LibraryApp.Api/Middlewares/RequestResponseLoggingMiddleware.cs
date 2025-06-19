@@ -1,4 +1,4 @@
-namespace LibraryApp.Middlewares;
+namespace LibraryApp.Api.Middlewares;
 
 public class RequestResponseLoggingMiddleware
 {

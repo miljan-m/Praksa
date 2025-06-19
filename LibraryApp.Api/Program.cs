@@ -1,9 +1,12 @@
-using LibraryApp.Data.DbRepository;
-using LibraryApp.Middlewares;
+using LibraryApp.Api.Middlewares;
 using LibraryApp.MiddlewaresExtensionMethods;
-using LibraryApp.Services;
-using LibraryApp.Services.Implementations;
+using LibraryApp.Application.Services;
+using LibraryApp.Application.Interfaces;
+using LibraryApp.Application.Interfaces.Repositories;
 using Microsoft.OpenApi.Models;
+using LibraryApp.Infrastructure.Repositories;
+using LibraryApp.Infrastructure.Persistance;
+
 
 
 var builder = WebApplication.CreateBuilder(args);

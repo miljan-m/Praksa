@@ -1,9 +1,8 @@
-using LibraryApp.DTOs;
-using LibraryApp.DTOs.RequestDTO.SpecialEditionBook;
-using LibraryApp.DTOs.ResponseDTO.SpecialEditionBook;
-using LibraryApp.Services;
+using LibraryApp.Application.Interfaces;
+using LibraryApp.Application.DTOs.ResponseDTO.SpecialEditionBook;
+using LibraryApp.Application.DTOs.RequestDTO.SpecialEditionBook;
 
-namespace LibraryApp.Controllers;
+namespace LibraryApp.Api.Controllers;
 
 [ApiController]
 [Route("/specialbook")]

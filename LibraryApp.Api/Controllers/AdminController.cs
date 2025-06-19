@@ -1,10 +1,8 @@
-using LibraryApp.Mappers;
-using LibraryApp.Services;
-using LibraryApp.DTOs.ResponseDTO.Admin;
-using LibraryApp.DTOs.RequestDTO.Admin;
-using System.ComponentModel;
+using LibraryApp.Application.Interfaces;
+using LibraryApp.Application.DTOs.ResponseDTO.Admin;
+using LibraryApp.Application.DTOs.RequestDTO.Admin;
 
-namespace LibraryApp.Controllers;
+namespace LibraryApp.Api.Controllers;
 
 [ApiController]
 [Route("admins")]
