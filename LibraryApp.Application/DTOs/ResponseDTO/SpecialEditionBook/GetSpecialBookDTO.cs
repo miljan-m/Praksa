@@ -1,3 +1,4 @@
+using LibraryApp.Application.DTOs.ResponseDTO.Authors;
 
 namespace LibraryApp.Application.DTOs.ResponseDTO.SpecialEditionBook;
 
@@ -7,6 +8,6 @@ public class GetSpecialBookDTO : GetBooksDTO
     private string autograph;
     public string Autograph { get => autograph; set => autograph = value; }
 
-    public Domen.Models.Author Author { get; set; }
+    public GetAuthorDTO Author { get; set; }
     public int AuthorId { get; set; }
 }

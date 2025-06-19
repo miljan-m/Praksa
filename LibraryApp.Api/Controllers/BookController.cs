@@ -1,5 +1,5 @@
 using LibraryApp.Application.Interfaces;
-using LibraryApp.Application.DTOs.ResponseDTO.Book;
+using LibraryApp.Application.DTOs.ResponseDTO.Books;
 using LibraryApp.Application.DTOs.RequestDTO.Book;
 
 namespace LibraryApp.Api.Controllers;

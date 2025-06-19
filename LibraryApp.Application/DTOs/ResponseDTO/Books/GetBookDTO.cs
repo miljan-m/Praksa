@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LibraryApp.Application.DTOs.ResponseDTO.Book;
+namespace LibraryApp.Application.DTOs.ResponseDTO.Books;
 
-public class GetBooksDTO
+public class GetBookDTO
 {
     [Key]
     public string Isbn { get; set; }

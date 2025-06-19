@@ -1,6 +1,7 @@
 using LibraryApp.Application.Interfaces;
 using LibraryApp.Mappers;
 using LibraryApp.Application.CustomExceptions;
+using LibraryApp.Application.Mappers;
 
 namespace LibraryApp.Application.Services;
 
@@ -15,7 +16,7 @@ public class AuthorService : IAuthorService
 
     public async Task<IEnumerable<GetAuthorsDTO>> GetAuthors()
     {
-        var authors = await authorRepository.GetAllAsync();
+        var authors = await authorRepository.GetAllAsync(); 
         var authorsDto = authors.Select(a => a.MapDomainEntitiesToDto());
         if (authors == null) throw new NotFoundException("Database is empty");
         return authorsDto;

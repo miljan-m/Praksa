@@ -1,4 +1,4 @@
-namespace LibraryApp.Application.DTOs.ResponseDTO.Author;
+namespace LibraryApp.Application.DTOs.ResponseDTO.Authors;
 
 public class GetAuthorDTO
 {
@@ -6,7 +6,7 @@ public class GetAuthorDTO
     public string LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
 
-    public List<Domen.Models.Book> Books{ get; set; }
+    public List<GetBooksDTO> Books{ get; set; }
 
     
 }

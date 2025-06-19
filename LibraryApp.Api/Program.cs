@@ -1,25 +1,15 @@
 using LibraryApp.Api.Middlewares;
 using LibraryApp.MiddlewaresExtensionMethods;
-using LibraryApp.Application.Services;
-using LibraryApp.Application.Interfaces;
-using LibraryApp.Application.Interfaces.Repositories;
 using Microsoft.OpenApi.Models;
-using LibraryApp.Infrastructure.Repositories;
-using LibraryApp.Infrastructure.Persistance;
-
+using LibraryApp.Infrastructure;
+using LibraryApp.Application;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<IBookService, BookService>();
-builder.Services.AddScoped<ISpecialEditionBookService, SpecialEditionBookService>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddScoped<IAuthorService, AuthorService>();
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi(options=>options.AddDocumentTransformer((document,context,CancellationToken)=>
@@ -35,12 +25,6 @@ builder.Services.AddOpenApi(options=>options.AddDocumentTransformer((document,co
 }));
 
 
-builder.Services.AddDbContext<LibraryDBContext>(options =>
-{
-    string ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
-    options.UseSqlServer(ConnectionString);
-});
-var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 

@@ -1,4 +1,5 @@
-namespace LibraryApp.Mappers;
+
+namespace LibraryApp.Application.Mappers;
 
 public static class ExtensionAuthorMethods
 {
@@ -41,7 +42,7 @@ public static class ExtensionAuthorMethods
         return author;
 
     }
-    
-   
+
+
 
 }

@@ -1,6 +1,6 @@
 using LibraryApp.Application.Interfaces;
-using LibraryApp.Application.DTOs.ResponseDTO.Author;
 using LibraryApp.Application.DTOs.RequestDTO.Author;
+using LibraryApp.Application.DTOs.ResponseDTO.Authors;
 
 namespace LibraryApp.Api.Controllers;
 
