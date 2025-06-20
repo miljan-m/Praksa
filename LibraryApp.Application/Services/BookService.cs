@@ -1,6 +1,12 @@
 using LibraryApp.Application.Interfaces;
 using LibraryApp.Mappers;
 using LibraryApp.Application.CustomExceptions;
+using MediatR;
+using LibraryApp.Application.CQRS.Queries.GetAll.BookQueries;
+using LibraryApp.Application.CQRS.Queries.GetOne.BookQueries;
+using LibraryApp.Application.CQRS.Commands.Create.CreateBookCommands;
+using LibraryApp.Application.CQRS.Commands.Delete.DeleteBookCommands;
+using LibraryApp.Application.CQRS.Commands.Update.UpdateBookCommands;
 
 namespace LibraryApp.Application.Services;
 
@@ -9,16 +15,18 @@ public class BookService : IBookService
     
     private readonly IGenericRepository<Book> bookRepository;
     private readonly IGenericRepository<Author> authorRepository;
-    public BookService(IGenericRepository<Book> bookRepository, IGenericRepository<Author> authorRepository)
+    private readonly IMediator mediator;
+    public BookService(IGenericRepository<Book> bookRepository, IGenericRepository<Author> authorRepository, IMediator mediator)
     {
-        
+
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
+        this.mediator = mediator;
     }
 
     public async Task<IEnumerable<GetBooksDTO>> GetBooks()
     {
-        var booksList = await bookRepository.GetAllAsync();
+        var booksList = await mediator.Send(new GetAllBooksQuery());
         var books = booksList.Select(b => b.MapDomainEntitiesToDTO());
         if (booksList == null) throw new NotFoundException("Database is empty");
         return books;
@@ -33,7 +41,7 @@ public class BookService : IBookService
             if (isbn.Contains(specChar[i])) isbnValid = false;
         }
         if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
-        var book = await bookRepository.GetOneAsync(isbn);
+        var book = await mediator.Send(new GetOneBookQuery(isbn));
         if (book == null) throw new BookNotFoundException(isbn);
         return book.MapDomainEntityToDTO();
     }
@@ -44,7 +52,7 @@ public class BookService : IBookService
         if (author == null) throw new AuthorNotFoundException(authorId);
         var book = bookCreateDTO.MapDtoToDomainEntity(author);
 
-        await bookRepository.CreateAsync(book);
+        await mediator.Send(new CreateBookCommand(book));
 
         return book.MapDomainEntityToDTO();
     }
@@ -60,7 +68,7 @@ public class BookService : IBookService
         if (isbnValid == false) throw new BookInvalidArgumentException(isbn);
         var book = await bookRepository.GetOneAsync(isbn);
         if (book == null)  throw new BookNotFoundException(isbn);
-        await bookRepository.DeleteAsync(isbn);
+        await mediator.Send(new DeleteBookCommand(isbn));
         return true; 
 
     }
@@ -86,7 +94,7 @@ public class BookService : IBookService
         if (book == null) throw new BookNotFoundException(isbn);
         var updatedBookToEntity = updatedBook.MapDtoToDomainEntity(book);
         updatedBookToEntity.Isbn = isbn;
-        await bookRepository.UpdateAsync(updatedBookToEntity, isbn);
+        await mediator.Send(new UpdateBookCommand(updatedBookToEntity,isbn));
         return book.MapDomainEntityToDTO();
     }
 }
