@@ -1,9 +1,8 @@
-using LibraryApp.Mappers;
-using LibraryApp.DTOs.RequestDTO.Author;
-using LibraryApp.Services;
-using LibraryApp.DTOs.ResponseDTO.Author;
+using LibraryApp.Application.Interfaces;
+using LibraryApp.Application.DTOs.RequestDTO.Author;
+using LibraryApp.Application.DTOs.ResponseDTO.Authors;
 
-namespace LibraryApp.Controllers;
+namespace LibraryApp.Api.Controllers;
 
 [ApiController]
 

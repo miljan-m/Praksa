@@ -1,4 +1,4 @@
-using LibraryApp.Middlewares;
+using LibraryApp.Api.Middlewares;
 
 namespace LibraryApp.MiddlewaresExtensionMethods;
 

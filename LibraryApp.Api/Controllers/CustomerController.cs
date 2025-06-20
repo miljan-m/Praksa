@@ -1,11 +1,9 @@
 using LibraryApp.Mappers;
-using LibraryApp.DTOs;
-using LibraryApp.Services;
-using System.Threading.Tasks;
-using LibraryApp.DTOs.ResponseDTO.Customer;
-using LibraryApp.DTOs.RequestDTO.Customer;
+using LibraryApp.Application.Interfaces;
+using LibraryApp.Application.DTOs.ResponseDTO.Customer;
+using LibraryApp.Application.DTOs.RequestDTO.Customer;
 
-namespace LibraryApp.Controllers;
+namespace LibraryApp.Api.Controllers;
 
 [ApiController]
 [Route("customers")]

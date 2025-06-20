@@ -1,9 +1,8 @@
-using LibraryApp.Mappers;
-using LibraryApp.DTOs;
-using LibraryApp.Services;
-using LibraryApp.DTOs.RequestDTO.Book;
+using LibraryApp.Application.Interfaces;
+using LibraryApp.Application.DTOs.ResponseDTO.Books;
+using LibraryApp.Application.DTOs.RequestDTO.Book;
 
-namespace LibraryApp.Controllers;
+namespace LibraryApp.Api.Controllers;
 
 [ApiController]
 [Route("books")]
