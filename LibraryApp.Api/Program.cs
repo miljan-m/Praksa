@@ -1,8 +1,8 @@
 using LibraryApp.Api.Middlewares;
 using LibraryApp.MiddlewaresExtensionMethods;
-using Microsoft.OpenApi.Models;
 using LibraryApp.Infrastructure;
 using LibraryApp.Application;
+using LibraryApp.Api;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,19 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi(options=>options.AddDocumentTransformer((document,context,CancellationToken)=>
-{
-    document.Info.Title = "My Library App";
-    document.Info.Contact = new OpenApiContact()
-    {
-        Email = "miljan@gmail.com",
-        Name = "Miljan"
-    };
-    document.Info.Description = "This is my librarry app";
-    return Task.CompletedTask;
-}));
+builder.Services.AddPresentationServices();
 
 
 var app = builder.Build();
@@ -40,9 +28,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.UseRequestResponseLogging();
-
 app.MapControllers();
 
 app.Run();

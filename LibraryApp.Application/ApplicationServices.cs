@@ -1,10 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using LibraryApp.Application.Services;
 using LibraryApp.Application.Interfaces;
 namespace LibraryApp.Application;
 
-public static class ServiceCollectionExtensions
+public static class ApplicationServices
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {

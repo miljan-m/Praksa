@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace LibraryApp.Infrastructure;
 
-public static class ServiceCollectionExtensions
+public static class InfrastructureServices
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
